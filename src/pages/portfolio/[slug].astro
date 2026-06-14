@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const portfolio = await getCollection('portfolio');
+  return portfolio.map(item => ({
+    params: { slug: item.slug },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const { Content } = await item.render();
+---
+
+<BaseLayout
+  title={`${item.data.client} — ${item.data.title} · Mimico Design House`}
+  description={item.data.description}
+>
+  <div class="wrap">
+    <a href="/portfolio/" class="back-link">All work</a>
+    <div class="content-header">
+      <div class="tag">{item.data.client}</div>
+      <h1>{item.data.title}</h1>
+      {item.data.tags.length > 0 && (
+        <div class="meta" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          {item.data.tags.map(tag => (
+            <span style="background:var(--surface);border:1px solid var(--line);border-radius:2px;padding:4px 10px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+    <div class="content-body">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

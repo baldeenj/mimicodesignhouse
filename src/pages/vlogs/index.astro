@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const vlogs = (await getCollection('vlogs'))
+  .sort((a, b) => b.data.episode - a.data.episode);
+
+function fmtDate(d: Date): string {
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+---
+
+<BaseLayout
+  title="Design Vlog — Mimico Design House"
+  description="Video episodes on UX practice, discovery, and design leadership from Mimico Design House."
+>
+  <div class="wrap">
+    <div class="page-hd">
+      <h1>Design Vlog</h1>
+      <p class="lead">Raw conversations on discovery, design leadership, and what it actually takes to ship.</p>
+    </div>
+
+    <div class="vlog-list">
+      {vlogs.map(vlog => (
+        <a href={`/vlogs/${vlog.slug}/`} class="vbox">
+          <div class="vth">
+            <div class="play">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+          <div class="vb">
+            <div class="tag">Design Vlog</div>
+            <h4>{vlog.data.title}</h4>
+            <div class="vm">EPISODE {vlog.data.episode} · {fmtDate(vlog.data.date).toUpperCase()}</div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

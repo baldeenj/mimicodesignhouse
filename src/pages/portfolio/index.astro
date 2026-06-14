@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const portfolio = (await getCollection('portfolio'))
+  .sort((a, b) => a.data.client.localeCompare(b.data.client));
+---
+
+<BaseLayout
+  title="Portfolio — Mimico Design House"
+  description="Selected work from Mimico Design House — UX engagements across Canada's largest enterprises and public institutions."
+>
+  <div class="wrap">
+    <div class="page-hd">
+      <h1>Selected Work</h1>
+      <p class="lead">Engagements across fintech, govtech, and enterprise SaaS — where the stakes are real and the margin for error is low.</p>
+    </div>
+
+    <div class="port-grid">
+      {portfolio.map(item => (
+        <a href={`/portfolio/${item.slug}/`} class="port-card">
+          <div class="cl">{item.data.client}</div>
+          <h2>{item.data.title}</h2>
+          <p>{item.data.description}</p>
+          {item.data.tags.length > 0 && (
+            <div class="tags">
+              {item.data.tags.map(tag => <span class="tg">{tag}</span>)}
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

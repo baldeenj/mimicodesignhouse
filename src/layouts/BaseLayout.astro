@@ -1,0 +1,91 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Mimico Design House — Human by Design. Seamless by Execution.',
+  description = 'Mimico Design House is a research-led, human-centered UX consultancy. We turn complex, data-rich enterprise products into experiences people actually understand — grounded in research, engineered to ship.',
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="theme-color" content="#0A0A0B" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23FF4D26'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%230A0A0B' stroke-width='2.5'/%3E%3Ccircle cx='16' cy='16' r='2.4' fill='%230A0A0B'/%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="/" class="brand"><span class="bmk"></span>Mimico Design House</a>
+    <nav class="navlinks">
+      <a href="/#services">Services</a>
+      <a href="/portfolio/">Work</a>
+      <a href="/#process">Method</a>
+      <a href="/articles/">Insights</a>
+    </nav>
+    <a href="/#contact" class="btn btn-primary">Start a conversation <span class="arr">→</span></a>
+  </div>
+</header>
+
+<slot />
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <div class="brand"><span class="bmk"></span>Mimico Design House</div>
+        <p class="foot-blurb">Human by Design. Seamless by Execution. Guiding design and development teams to create clear, intuitive digital experiences.</p>
+      </div>
+      <div class="fcol"><h5>Studio</h5><a href="/#services">Services</a><a href="/portfolio/">Work</a><a href="/#process">Method</a></div>
+      <div class="fcol"><h5>Insights</h5><a href="/articles/">Posts</a><a href="/vlogs/">Vlog</a><a href="/portfolio/">Portfolio</a></div>
+      <div class="fcol"><h5>Connect</h5><a href="#">LinkedIn</a><a href="#">YouTube</a><a href="/#contact">Contact</a></div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 Mimico Design House Inc. — East Gwillimbury, ON</span>
+      <span>Serving clients globally</span>
+    </div>
+  </div>
+</footer>
+
+<script is:inline>
+(function () {
+  "use strict";
+  const revealEls = document.querySelectorAll(".reveal");
+  if (!revealEls.length) return;
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReduced || !("IntersectionObserver" in window)) {
+    revealEls.forEach(function(el) { el.classList.add("in"); });
+    return;
+  }
+  const io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in");
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(function(el) { io.observe(el); });
+})();
+</script>
+
+</body>
+</html>

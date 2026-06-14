@@ -1,0 +1,30 @@
+fragment ArticleParts on Article {
+  __typename
+  title
+  tag
+  date
+  summary
+  body
+}
+
+fragment VlogParts on Vlog {
+  __typename
+  title
+  episode
+  date
+  videoUrl
+  thumbnailUrl
+  summary
+  body
+}
+
+fragment PortfolioParts on Portfolio {
+  __typename
+  client
+  title
+  description
+  tags
+  imageUrl
+  featured
+  body
+}

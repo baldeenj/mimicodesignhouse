@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const vlogs = await getCollection('vlogs');
+  return vlogs.map(vlog => ({
+    params: { slug: vlog.slug },
+    props: { vlog },
+  }));
+}
+
+const { vlog } = Astro.props;
+const { Content } = await vlog.render();
+
+function fmtDate(d: Date): string {
+  return d.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+}
+
+function getEmbedUrl(url: string): string {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+}
+
+const embedUrl = getEmbedUrl(vlog.data.videoUrl);
+---
+
+<BaseLayout
+  title={`${vlog.data.title} — Mimico Design House`}
+  description={vlog.data.summary}
+>
+  <div class="wrap">
+    <a href="/vlogs/" class="back-link">All episodes</a>
+    <div class="content-header">
+      <div class="tag">Design Vlog · Episode {vlog.data.episode}</div>
+      <h1>{vlog.data.title}</h1>
+      <div class="meta">{fmtDate(vlog.data.date)}</div>
+    </div>
+
+    <div class="content-body">
+      <div class="prose">
+        <div class="video-wrap">
+          <iframe
+            src={embedUrl}
+            title={vlog.data.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <Content />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

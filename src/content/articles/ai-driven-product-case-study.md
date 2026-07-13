@@ -2,59 +2,73 @@
 title: "Case Study: Designing an AI-Driven Product with Strategic Ownership"
 tag: Design
 date: 2025-07-03
-summary: "When AI generates the content, what does the designer's job become? This case study traces the design process for an AI-driven product — from problem definition through delivery — and examines what strategic ownership looks like when the system generates its own outputs."
 ---
 
-Designing products where AI generates core outputs presents a set of challenges distinct from conventional product design. The interaction model is different, the error modes are different, the user's mental model is different, and the designer's relationship to the content is fundamentally changed.
+## Project Overview
 
-This case study traces the design process for an AI-driven product — details generalized for confidentiality — and examines what strategic ownership means when the system is part of the creative process.
+A team recognized that Machine Learning and Artificial Intelligence could enhance their decades-old methodology for forecasting product order volumes. Historically reliant on Excel for manual data entry and team communication, they sought to transition to a web-based application capable of handling larger datasets faster while generating cost-minimization insights and business growth opportunities.
 
-## The Problem: Intelligence Without Judgment
+## Role of the Product Designer
 
-The client operated a professional services platform where users needed to produce complex outputs — structured documents, analysis, recommendations — that required both domain knowledge and judgment. The existing process was manual, slow, and inconsistent. The proposed solution was to introduce AI generation of these outputs, with users reviewing, editing, and approving.
+The Product Designer initiated the transformation from Excel-based processes to a web application, requiring both user-centered design and understanding of AI/ML application. Key considerations included:
 
-The design challenge wasn't "how do we make AI generation work?" — the technical team had a capable model. The design challenge was: how do we design an interface and interaction model such that AI-generated outputs make users more effective, rather than undermining their expertise, creating over-reliance, or producing outputs users can't evaluate?
+- Current process analysis and Excel usage patterns
+- Identifying which business processes to maintain, enhance, or replace
+- Determining where AI and ML could introduce efficiencies
+- Ensuring AI capabilities aligned with user expectations
+- Designing intuitive input mechanisms and output consumption
+- Enabling users to focus on strategic, human-centric tasks
 
-## Discovery: Understanding the Expert Mental Model
+Before developing AI models and algorithms, the Product Designer assumed a strategic ownership role, defining the foundational framework for data inputs and AI-generated outputs. This involved:
 
-The first phase was deep research with the domain experts who would use the system. This was not generic user research — it was specifically targeted at understanding the expert mental model: how do they evaluate quality in these outputs? What signals tell them something is wrong? What's the distribution of cases from routine to genuinely complex?
+- Identifying key stakeholders through collaboration with project management
+- Understanding current business processes and project value propositions
+- Developing interview scripts exploring existing workflows and ideal product visions
+- Scheduling and facilitating stakeholder interviews
+- Remaining open to discovering additional stakeholders and business areas
+- Synthesizing feedback to establish frameworks for user personas, journeys, and flows
 
-Key findings:
+## Research & Discovery
 
-**Experts evaluate holistically first, details second.** When reviewing a document, experienced professionals scan for structural correctness and logical coherence before reading carefully. The AI outputs needed to make this high-level evaluation fast and reliable.
+Stakeholder interview insights enabled the Product Designer to:
 
-**Errors cluster by type.** AI errors in this domain weren't random — they followed predictable patterns. Certain types of reasoning were reliably wrong; certain types of fact retrieval were reliably strong. This asymmetry shaped where the interface needed to direct attention.
+- Identify user personas based on discussed roles
+- Conduct refinement workshops for personas
+- Discover and develop additional personas not previously identified
+- Develop user journeys for critical-need personas
+- Create user flows outlining essential features, screens, inputs, and outputs
+- Refine flows and identify missing components
+- Develop information architecture prioritizing productivity and intuitive navigation
 
-**Trust is earned incrementally.** No one was going to trust AI-generated outputs on day one. The system needed to earn trust through demonstrated accuracy, and the interface needed to support the verification behavior that would establish that trust.
+The resulting product roadmap and vision provided technical teams—data scientists, engineers, and developers—with a clear framework for designing and developing optimized AI models.
 
-**Accountability is non-negotiable.** Users needed to be able to stand behind the outputs they approved. The interface had to make clear that they were reviewing and approving, not rubber-stamping — and had to support the level of review that this accountability required.
+## Designing with Clarity and Logic
 
-## Design Principles from Discovery
+The research phase enabled conceptualization of how the application would meet user needs while allowing AI models to generate necessary outcomes. Wireframes and mockups facilitated stakeholder discussions about design direction and proved crucial for establishing foundations for robust AI models.
 
-The discovery phase produced four design principles:
+Prototypes served multiple functions:
 
-**Make uncertainty visible.** When the AI is less confident, show it. Don't present all outputs with equal apparent confidence.
+- Helping technical teams visualize user inputs and generated outputs
+- Assisting data scientists in understanding data input/output requirements and algorithm design
+- Illustrating detailed interactions for input calibration
+- Facilitating collaboration between back-end, front-end developers, and data teams for API design
+- Enabling usability testing sessions with end users
 
-**Support the expert's evaluation process, not just the output.** The interface should make it fast to check what experts actually check — not just display what was generated.
+The Product Designer's hybrid mindset—functioning as an intermediary between business strategy and technical execution—fostered crucial collaboration among product, engineering, and data teams.
 
-**Separate the AI's job from the user's job.** The AI drafts; the user evaluates, edits, and owns. The interaction model must make this distinction clear and feel true, not just nominal.
+Deliverables for driving AI-enabled product success included:
 
-**Build in checkpoints for complex cases.** The system should be able to flag outputs that exceed its reliable range and escalate to more intensive human review.
+- User personas, journeys, flows, and information architecture aligned with user needs
+- Interactive prototypes refined through multiple usability testing rounds
+- Detailed interactions outlining user inputs and required supporting data
+- Insight-driven visualizations shaping AI output presentation and model design
+- Comprehensive product roadmap enabling MVP extraction and iterative releases
 
-## Design Decisions
+## Lessons Learned
 
-**Confidence indicators without specificity theater.** Showing a "73% confidence" score would create false precision. Instead, the design used qualitative signals (flagged sections, suggested-review prompts) that communicated uncertainty actionably without false precision.
+The Product Designer began by identifying users' needs and pain points within existing business processes, with stakeholders seeking to explore AI/ML applications for introducing savings and efficiencies.
 
-**Section-level review, not just document-level.** Rather than presenting the full output and asking for approval, the interface broke outputs into evaluable sections with explicit review states. This made thorough review faster and made the user's role explicit.
+The designer's responsibilities encompassed problem identification and analysis, integrating ML/AI solutions through extensive collaboration with stakeholders, product managers, engineers, and data teams. This collaboration proved essential for articulating user-centered product vision while providing insights into data engineering needed for optimizing AI model outcomes.
 
-**Edit-first affordance.** The design made editing easy and prominent — not hiding behind "accept" and "reject" options. This reinforced the mental model that the output was a starting draft, not a final recommendation.
-
-**Audit trail by default.** Every AI-generated output included a transparent record of what the model used as inputs, what version it was, and what changes the user made. This served both accountability and debugging.
-
-## Outcomes and Reflections
-
-Post-launch observation showed users establishing trust incrementally — initially reviewing every section carefully, then calibrating to the sections the AI reliably struggled with. This was the expected pattern, and the interface supported it.
-
-The most important reflection: the design work was primarily about the relationship between the AI system and the human expert, not about the interface in isolation. Getting that relationship right — respecting expert judgment while genuinely augmenting it — was the core design problem. The interface was in service of that relationship.
-
-Strategic ownership in AI-driven product design means owning that relationship: deciding how AI and human expertise should interact, what role each should play, and what the interface must do to keep the human genuinely in control.
+Since AI and ML development demands substantial time and resources, organizations must ensure investments maximize benefits and potential gains. In this case study, the Product Designer's role proved vital in establishing product vision and roadmap while helping project teams understand and achieve this vision.
+</content>

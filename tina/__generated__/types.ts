@@ -206,6 +206,7 @@ export type Article = Node & Document & {
   title: Scalars['String']['output'];
   tag: Scalars['String']['output'];
   date: Scalars['String']['output'];
+  heroImage?: Maybe<Scalars['String']['output']>;
   summary?: Maybe<Scalars['String']['output']>;
   body?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
@@ -228,6 +229,13 @@ export type DatetimeFilter = {
   in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+export type ImageFilter = {
+  startsWith?: InputMaybe<Scalars['String']['input']>;
+  eq?: InputMaybe<Scalars['String']['input']>;
+  exists?: InputMaybe<Scalars['Boolean']['input']>;
+  in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
 export type RichTextFilter = {
   startsWith?: InputMaybe<Scalars['String']['input']>;
   eq?: InputMaybe<Scalars['String']['input']>;
@@ -238,6 +246,7 @@ export type ArticleFilter = {
   title?: InputMaybe<StringFilter>;
   tag?: InputMaybe<StringFilter>;
   date?: InputMaybe<DatetimeFilter>;
+  heroImage?: InputMaybe<ImageFilter>;
   summary?: InputMaybe<StringFilter>;
   body?: InputMaybe<RichTextFilter>;
 };
@@ -314,13 +323,6 @@ export type Portfolio = Node & Document & {
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
-};
-
-export type ImageFilter = {
-  startsWith?: InputMaybe<Scalars['String']['input']>;
-  eq?: InputMaybe<Scalars['String']['input']>;
-  exists?: InputMaybe<Scalars['Boolean']['input']>;
-  in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 export type BooleanFilter = {
@@ -452,6 +454,7 @@ export type ArticleMutation = {
   title?: InputMaybe<Scalars['String']['input']>;
   tag?: InputMaybe<Scalars['String']['input']>;
   date?: InputMaybe<Scalars['String']['input']>;
+  heroImage?: InputMaybe<Scalars['String']['input']>;
   summary?: InputMaybe<Scalars['String']['input']>;
   body?: InputMaybe<Scalars['JSON']['input']>;
 };
@@ -476,7 +479,7 @@ export type PortfolioMutation = {
   body?: InputMaybe<Scalars['JSON']['input']>;
 };
 
-export type ArticlePartsFragment = { __typename: 'Article', title: string, tag: string, date: string, summary?: string | null, body?: any | null };
+export type ArticlePartsFragment = { __typename: 'Article', title: string, tag: string, date: string, heroImage?: string | null, summary?: string | null, body?: any | null };
 
 export type VlogPartsFragment = { __typename: 'Vlog', title: string, episode: number, date: string, videoUrl: string, thumbnailUrl?: string | null, summary?: string | null, body?: any | null };
 
@@ -487,7 +490,7 @@ export type ArticleQueryVariables = Exact<{
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article: { __typename: 'Article', id: string, title: string, tag: string, date: string, summary?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type ArticleQuery = { __typename?: 'Query', article: { __typename: 'Article', id: string, title: string, tag: string, date: string, heroImage?: string | null, summary?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type ArticleConnectionQueryVariables = Exact<{
   before?: InputMaybe<Scalars['String']['input']>;
@@ -499,7 +502,7 @@ export type ArticleConnectionQueryVariables = Exact<{
 }>;
 
 
-export type ArticleConnectionQuery = { __typename?: 'Query', articleConnection: { __typename?: 'ArticleConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'ArticleConnectionEdges', cursor: string, node?: { __typename: 'Article', id: string, title: string, tag: string, date: string, summary?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type ArticleConnectionQuery = { __typename?: 'Query', articleConnection: { __typename?: 'ArticleConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'ArticleConnectionEdges', cursor: string, node?: { __typename: 'Article', id: string, title: string, tag: string, date: string, heroImage?: string | null, summary?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export type VlogQueryVariables = Exact<{
   relativePath: Scalars['String']['input'];
@@ -545,6 +548,7 @@ export const ArticlePartsFragmentDoc = gql`
   title
   tag
   date
+  heroImage
   summary
   body
 }

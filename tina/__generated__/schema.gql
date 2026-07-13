@@ -97,6 +97,7 @@ type Article implements Node & Document {
   title: String!
   tag: String!
   date: String!
+  heroImage: String
   summary: String
   body: JSON
   id: ID!
@@ -119,6 +120,13 @@ input DatetimeFilter {
   in: [String]
 }
 
+input ImageFilter {
+  startsWith: String
+  eq: String
+  exists: Boolean
+  in: [String]
+}
+
 input RichTextFilter {
   startsWith: String
   eq: String
@@ -129,6 +137,7 @@ input ArticleFilter {
   title: StringFilter
   tag: StringFilter
   date: DatetimeFilter
+  heroImage: ImageFilter
   summary: StringFilter
   body: RichTextFilter
 }
@@ -201,13 +210,6 @@ type Portfolio implements Node & Document {
   _values: JSON!
 }
 
-input ImageFilter {
-  startsWith: String
-  eq: String
-  exists: Boolean
-  in: [String]
-}
-
 input BooleanFilter {
   eq: Boolean
   exists: Boolean
@@ -265,6 +267,7 @@ input ArticleMutation {
   title: String
   tag: String
   date: String
+  heroImage: String
   summary: String
   body: JSON
 }

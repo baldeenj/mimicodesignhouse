@@ -51,6 +51,11 @@ var config_default = defineConfig({
             required: true
           },
           {
+            type: "image",
+            name: "heroImage",
+            label: "Hero Image (optional)"
+          },
+          {
             type: "string",
             name: "summary",
             label: "Summary (shown in listings)",

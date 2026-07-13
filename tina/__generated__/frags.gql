@@ -3,6 +3,7 @@ fragment ArticleParts on Article {
   title
   tag
   date
+  heroImage
   summary
   body
 }

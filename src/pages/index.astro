@@ -20,6 +20,51 @@ function fmtDate(d: Date): string {
 // Cloudflare Turnstile site key (public). Set PUBLIC_TURNSTILE_SITE_KEY in your
 // environment for production; the fallback is Cloudflare's "always passes" test key.
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+
+const services = [
+  {
+    no: '01',
+    title: 'Advising & Coaching',
+    summary: 'Bring clarity to complex transformation challenges through evidence-based research and HCI principles.',
+    deliverables: ['Design & product team mentorship', 'Evidence-based transformation roadmap', 'Stakeholder alignment workshops'],
+    methods: ['HCI principles', 'Facilitation', 'Coaching'],
+  },
+  {
+    no: '02',
+    title: 'Application Audits',
+    summary: 'Uncover opportunities and design smarter solutions by combining UX expertise with technical rigor.',
+    deliverables: ['Heuristic & accessibility evaluation', 'Prioritized opportunity backlog', 'Annotated audit report'],
+    methods: ['WCAG', 'Heuristics', 'Analytics review'],
+  },
+  {
+    no: '03',
+    title: 'Collaborative Design',
+    summary: 'Co-create solutions that balance usability with business impact through inclusive design practices.',
+    deliverables: ['Facilitated design sprints', 'Interactive prototypes', 'Design-system foundations'],
+    methods: ['Design sprints', 'Prototyping', 'Co-design'],
+  },
+  {
+    no: '04',
+    title: 'User Research',
+    summary: 'Apply evidence-based methodologies to uncover real user needs and align every decision with goals.',
+    deliverables: ['Generative & evaluative studies', 'Usability testing & synthesis', 'Personas & journey maps'],
+    methods: ['Interviews', 'Usability testing', 'Journey mapping'],
+  },
+  {
+    no: '05',
+    title: 'Strategy Translation',
+    summary: 'Turn research and design insight into clear, practical strategy that accelerates alignment.',
+    deliverables: ['Product & experience strategy', 'Opportunity prioritization framework', 'Executive-ready narratives'],
+    methods: ['Synthesis', 'Prioritization', 'Storytelling'],
+  },
+  {
+    no: '06',
+    title: 'Business Impact Analysis',
+    summary: 'Improve the bottom line through data-driven UX that directly lifts conversion and retention.',
+    deliverables: ['UX metrics & measurement plan', 'Conversion & retention analysis', 'ROI modeling'],
+    methods: ['Analytics', 'A/B testing', 'ROI modeling'],
+  },
+];
 ---
 
 <BaseLayout>
@@ -41,7 +86,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
         <p>Where is complexity slowing your product down?</p>
         <div class="cbtns">
           <a href="#contact" class="btn btn-dark">Start a conversation <span class="arr">→</span></a>
-          <a href="/portfolio/" class="btn btn-dark" style="background:transparent;border:1.5px solid rgba(26,17,7,.4);color:var(--on-accent)">See selected work</a>
+          <a href="/portfolio/" class="btn btn-dark" style="background:transparent;border:1.5px solid rgba(253,253,252,.35);color:var(--on-accent)">See selected work</a>
         </div>
       </div>
     </div>
@@ -71,16 +116,89 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
       <h2>What we offer</h2>
       <p class="lead">Six disciplines that take the work from first principles to a shipped, measurable outcome.</p>
     </div>
-    <div class="svc-grid reveal">
-      <div class="svc"><div class="top"><span class="no">01</span><span class="pl">+</span></div><h3>Advising &amp; Coaching</h3><p>Bring clarity to complex transformation challenges through evidence-based research and HCI principles.</p></div>
-      <div class="svc"><div class="top"><span class="no">02</span><span class="pl">+</span></div><h3>Application Audits</h3><p>Uncover opportunities and design smarter solutions by combining UX expertise with technical rigor.</p></div>
-      <div class="svc"><div class="top"><span class="no">03</span><span class="pl">+</span></div><h3>Collaborative Design</h3><p>Co-create solutions that balance usability with business impact through inclusive design practices.</p></div>
-      <div class="svc"><div class="top"><span class="no">04</span><span class="pl">+</span></div><h3>User Research</h3><p>Apply evidence-based methodologies to uncover real user needs and align every decision with goals.</p></div>
-      <div class="svc"><div class="top"><span class="no">05</span><span class="pl">+</span></div><h3>Strategy Translation</h3><p>Turn research and design insight into clear, practical strategy that accelerates alignment.</p></div>
-      <div class="svc"><div class="top"><span class="no">06</span><span class="pl">+</span></div><h3>Business Impact Analysis</h3><p>Improve the bottom line through data-driven UX that directly lifts conversion and retention.</p></div>
+    <div class="svc-explorer reveal">
+      <div class="svc-tabs" role="tablist" aria-label="What we offer" aria-orientation="vertical">
+        {services.map((s, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`svc-tab-${i}`}
+            class="svc-tab"
+            aria-selected={i === 0 ? 'true' : 'false'}
+            aria-controls={`svc-panel-${i}`}
+            tabindex={i === 0 ? 0 : -1}
+          >
+            <span class="svc-tab-no">{s.no}</span>
+            <span class="svc-tab-title">{s.title}</span>
+            <span class="svc-tab-arr" aria-hidden="true">→</span>
+          </button>
+        ))}
+      </div>
+      <div class="svc-panels">
+        {services.map((s, i) => (
+          <div
+            role="tabpanel"
+            id={`svc-panel-${i}`}
+            class="svc-panel"
+            aria-labelledby={`svc-tab-${i}`}
+            tabindex="0"
+            hidden={i !== 0}
+          >
+            <div class="svc-panel-no">{s.no} — Service</div>
+            <h3>{s.title}</h3>
+            <p class="svc-panel-sum">{s.summary}</p>
+            <div class="svc-panel-cols">
+              <div class="svc-deliv">
+                <h4>What you get</h4>
+                <ul>
+                  {s.deliverables.map((d) => <li>{d}</li>)}
+                </ul>
+              </div>
+              <div class="svc-meth">
+                <h4>Methods</h4>
+                <div class="svc-tags">
+                  {s.methods.map((m) => <span class="svc-tag">{m}</span>)}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </section>
+
+<script is:inline>
+(function () {
+  "use strict";
+  const tablist = document.querySelector(".svc-tabs");
+  if (!tablist) return;
+  const tabs = Array.prototype.slice.call(tablist.querySelectorAll('[role="tab"]'));
+  const panels = tabs.map(function (t) { return document.getElementById(t.getAttribute("aria-controls")); });
+
+  function select(idx, focus) {
+    tabs.forEach(function (tab, i) {
+      const active = i === idx;
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+      tab.tabIndex = active ? 0 : -1;
+      if (panels[i]) panels[i].hidden = !active;
+    });
+    if (focus) tabs[idx].focus();
+  }
+
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener("click", function () { select(i, false); });
+    tab.addEventListener("keydown", function (e) {
+      let next = null;
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") next = (i + 1) % tabs.length;
+      else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === "Home") next = 0;
+      else if (e.key === "End") next = tabs.length - 1;
+      if (next !== null) { e.preventDefault(); select(next, true); }
+    });
+  });
+})();
+</script>
 
 <!-- PORTFOLIO / CLIENTS -->
 <section id="work" class="clients">
@@ -152,7 +270,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
 
 <!-- CTA -->
 <section id="contact" class="cta">
-  <div class="big-mark" aria-hidden="true"></div>
+  <img class="cta-mark" src="/assets/img/mdh-mark.png" alt="" aria-hidden="true" />
   <div class="wrap">
     <span class="label">Start a conversation</span>
     <h2>Let's build something people understand.</h2>
@@ -181,10 +299,10 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000
       <!-- Honeypot: hidden from humans, catches naive bots -->
       <input type="text" name="website" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light"></div>
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark"></div>
 
       <div class="cf-actions">
-        <button type="submit" class="btn btn-dark">Send message <span class="arr">→</span></button>
+        <button type="submit" class="btn btn-primary">Send message <span class="arr">→</span></button>
       </div>
 
       <p class="cf-status" role="status" aria-live="polite" hidden></p>

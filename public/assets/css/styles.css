@@ -90,7 +90,7 @@ h1.hero-h .ac{color:#9EA0A6}
 
 /* sectors marquee */
 .marq{background:var(--bg-2);border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:18px 0}
-.marq-track{display:inline-flex;gap:0;animation:scroll 28s linear infinite}
+.marq-track{display:inline-flex;gap:0;animation:scroll 220s linear infinite}
 .marq-track span{font-family:var(--exp);font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:0 26px;display:inline-flex;align-items:center;gap:26px}
 .marq-track span::after{content:"";width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block}
 @keyframes scroll{to{transform:translateX(-50%)}}

@@ -34,6 +34,9 @@ function fmtDate(d: Date): string {
       <h1>{article.data.title}</h1>
       <div class="meta">{fmtDate(article.data.date)}</div>
     </div>
+    {article.data.heroImage && (
+      <img class="content-hero" src={article.data.heroImage} alt={article.data.title} />
+    )}
     <div class="content-body">
       <div class="prose">
         <Content />

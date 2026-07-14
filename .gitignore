@@ -10,3 +10,8 @@ dist/
 .tina/__generated__/
 public/admin/
 
+# Secrets / local env (Turnstile, Resend, Tina, wrangler)
+.env
+.env.*
+.dev.vars
+

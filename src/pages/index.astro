@@ -16,6 +16,10 @@ const portfolioItems = (await getCollection('portfolio'))
 function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
+
+// Cloudflare Turnstile site key (public). Set PUBLIC_TURNSTILE_SITE_KEY in your
+// environment for production; the fallback is Cloudflare's "always passes" test key.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 ---
 
 <BaseLayout>
@@ -28,7 +32,6 @@ function fmtDate(d: Date): string {
   <div class="hero">
     <div class="hero-top">
       <span class="label">Human-Centered Design</span>
-      <span class="meta"><span class="dot"></span> AVAILABLE FOR Q3 · TORONTO + GLOBAL</span>
     </div>
     <h1 class="hero-h">Human by<br />design. <span class="ac">Seamless</span><br />by execution.</h1>
     <div class="hero-split">
@@ -154,11 +157,89 @@ function fmtDate(d: Date): string {
     <span class="label">Start a conversation</span>
     <h2>Let's build something people understand.</h2>
     <p>Tell us where complexity is slowing you down. We'll uncover the opportunity, design the smarter solution, and ship experiences that move the bottom line.</p>
-    <div class="cta-row">
-      <a href="#" class="btn btn-dark">Schedule a discovery call <span class="arr">→</span></a>
-      <a href="mailto:hello@mimicodesignhouse.com" class="btn btn-dark" style="background:transparent;border:1.5px solid rgba(26,17,7,.45);color:var(--on-accent)">hello@mimicodesignhouse.com</a>
-    </div>
+
+    <form id="contactForm" class="cta-form" novalidate>
+      <div class="cf-grid">
+        <label class="cf-field">
+          <span class="cf-lab">Name</span>
+          <input type="text" name="name" required autocomplete="name" maxlength="120" />
+        </label>
+        <label class="cf-field">
+          <span class="cf-lab">Email</span>
+          <input type="email" name="email" required autocomplete="email" maxlength="200" />
+        </label>
+      </div>
+      <label class="cf-field">
+        <span class="cf-lab">Company <em>optional</em></span>
+        <input type="text" name="company" autocomplete="organization" maxlength="160" />
+      </label>
+      <label class="cf-field">
+        <span class="cf-lab">Where is complexity slowing you down?</span>
+        <textarea name="message" rows="4" required maxlength="4000"></textarea>
+      </label>
+
+      <!-- Honeypot: hidden from humans, catches naive bots -->
+      <input type="text" name="website" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light"></div>
+
+      <div class="cf-actions">
+        <button type="submit" class="btn btn-dark">Send message <span class="arr">→</span></button>
+        <a href="mailto:hello@mimicodesignhouse.com" class="cf-alt">or email hello@mimicodesignhouse.com</a>
+      </div>
+
+      <p class="cf-status" role="status" aria-live="polite" hidden></p>
+    </form>
   </div>
 </section>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script is:inline>
+(function () {
+  "use strict";
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+  const statusEl = form.querySelector(".cf-status");
+  const btn = form.querySelector("button[type=submit]");
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.hidden = false;
+    statusEl.className = "cf-status" + (kind ? " is-" + kind : "");
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    // Honeypot tripped — pretend success, do nothing.
+    if (form.website && form.website.value) { setStatus("Thanks — we'll be in touch.", "ok"); return; }
+
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    const token = (form.querySelector('[name="cf-turnstile-response"]') || {}).value;
+    if (!token) { setStatus("Please complete the verification challenge and try again.", "err"); return; }
+
+    btn.disabled = true;
+    setStatus("Sending…", "");
+
+    try {
+      const res = await fetch("/api/contact", { method: "POST", body: new FormData(form) });
+      const data = await res.json().catch(function () { return {}; });
+      if (res.ok) {
+        form.reset();
+        if (window.turnstile) window.turnstile.reset();
+        setStatus("Thanks — your message is on its way. We'll reply within a couple of business days.", "ok");
+      } else {
+        if (window.turnstile) window.turnstile.reset();
+        setStatus(data.error || "Something went wrong. Please email us directly at hello@mimicodesignhouse.com.", "err");
+      }
+    } catch (err) {
+      setStatus("Network error. Please email us directly at hello@mimicodesignhouse.com.", "err");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
 
 </BaseLayout>

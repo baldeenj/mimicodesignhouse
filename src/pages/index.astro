@@ -6,15 +6,23 @@ const articles = (await getCollection('articles'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 4);
 
-const vlogs = (await getCollection('vlogs'))
-  .sort((a, b) => b.data.episode - a.data.episode);
-const latestVlog = vlogs[0];
+const latestVlogs = (await getCollection('vlogs'))
+  .sort((a, b) => b.data.episode - a.data.episode)
+  .slice(0, 4);
 
 const portfolioItems = (await getCollection('portfolio'))
   .filter(p => p.data.featured);
 
 function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+
+// Resolve a vlog thumbnail: explicit thumbnailUrl, else a YouTube still when the
+// videoUrl carries a valid 11-char id, else null (falls back to a styled placeholder).
+function vlogThumb(videoUrl: string, thumbnailUrl?: string): string | null {
+  if (thumbnailUrl) return thumbnailUrl;
+  const m = videoUrl.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})(?:[?&]|$)/);
+  return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
 }
 
 // Cloudflare Turnstile site key (public). Set PUBLIC_TURNSTILE_SITE_KEY in your
@@ -103,14 +111,14 @@ const services = [
 </div>
 
 <!-- STATS -->
-<div class="stats">
+<div class="stats sec-angled">
   <div class="stat reveal"><div class="n">25+</div><div class="l">Years combined experience in HCI &amp; UX strategy</div></div>
   <div class="stat reveal"><div class="n">100+</div><div class="l">Product &amp; delivery teams coached</div></div>
   <div class="stat reveal"><div class="n">40%</div><div class="l">Average ROI increase across engagements</div></div>
 </div>
 
 <!-- SERVICES -->
-<section id="services">
+<section id="services" class="sec-angled">
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>What we offer</h2>
@@ -219,7 +227,7 @@ const services = [
 </section>
 
 <!-- PROCESS -->
-<section id="process">
+<section id="process" class="sec-angled">
   <div class="wrap">
     <div class="sec-head reveal">
       <h2>How we work</h2>
@@ -238,38 +246,56 @@ const services = [
 <section id="insights">
   <div class="wrap">
     <div class="sec-head reveal">
-      <h2>Insights &amp; vlog</h2>
-      <p class="lead">Where research, AI, and systems thinking meet practice.</p>
+      <h2>Insights</h2>
+      <p class="lead">Research, AI, and systems thinking from the studio.</p>
     </div>
-    <div class="ins reveal">
-      <div class="plist">
-        {articles.map(article => (
-          <a href={`/articles/${article.slug}/`}>
-            <div>
-              <div class="tag">{article.data.tag}</div>
-              <h4>{article.data.title}</h4>
-            </div>
-            <div class="dt">{fmtDate(article.data.date)}</div>
-          </a>
-        ))}
-        <div style="margin-top:28px"><a href="/articles/" class="btn btn-line">All articles <span class="arr">→</span></a></div>
-      </div>
-      {latestVlog && (
-        <a href={`/vlogs/${latestVlog.slug}/`} class="vbox">
-          <div class="vth"><div class="play"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div></div>
-          <div class="vb">
-            <div class="tag">Design Vlog · Latest</div>
-            <h4>{latestVlog.data.title}</h4>
-            <div class="vm">EPISODE {latestVlog.data.episode} · {fmtDate(latestVlog.data.date).toUpperCase()}</div>
+    <div class="home-grid reveal">
+      {articles.map(article => (
+        <a href={`/articles/${article.slug}/`} class="ins-card">
+          <div class="tag">{article.data.tag}</div>
+          <h4>{article.data.title}</h4>
+          <div class="ins-card-ft">
+            <span class="dt">{fmtDate(article.data.date)}</span>
+            <span class="arr">→</span>
           </div>
         </a>
-      )}
+      ))}
     </div>
+    <div class="sec-more reveal"><a href="/articles/" class="btn btn-line">All articles <span class="arr">→</span></a></div>
+  </div>
+</section>
+
+<!-- VLOGS -->
+<section id="vlogs" class="sec-angled">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>Vlogs</h2>
+      <p class="lead">Short videos on design, research, and delivery.</p>
+    </div>
+    <div class="home-grid reveal">
+      {latestVlogs.map(vlog => {
+        const thumb = vlogThumb(vlog.data.videoUrl, vlog.data.thumbnailUrl);
+        return (
+          <a href={`/vlogs/${vlog.slug}/`} class="vbox">
+            <div class="vth">
+              {thumb && <img class="vth-img" src={thumb} alt="" loading="lazy" />}
+              <div class="play"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+            </div>
+            <div class="vb">
+              <div class="tag">Episode {vlog.data.episode}</div>
+              <h4>{vlog.data.title}</h4>
+              <div class="vm">{fmtDate(vlog.data.date).toUpperCase()}</div>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+    <div class="sec-more reveal"><a href="/vlogs/" class="btn btn-line">All vlogs <span class="arr">→</span></a></div>
   </div>
 </section>
 
 <!-- CTA -->
-<section id="contact" class="cta">
+<section id="contact" class="cta sec-angled">
   <img class="cta-mark" src="/assets/img/mdh-mark.png" alt="" aria-hidden="true" />
   <div class="wrap">
     <span class="label">Start a conversation</span>

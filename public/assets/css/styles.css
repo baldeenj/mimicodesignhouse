@@ -34,7 +34,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
+body{background-color:var(--bg);background-image:var(--dots-dark);background-size:26px 26px;color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
 /* ambient background: whisper-soft neutral tints + fine grain, fixed behind content */
 body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
   background:
@@ -118,8 +118,8 @@ section{padding:108px 0}
 /* stats sits directly under the thin marquee — keep its top flat, angle only the bottom */
 .stats.sec-angled::before{top:0;clip-path:polygon(0 0,100% 0,100% calc(100% - var(--slant)),0 100%)}
 .stats.sec-angled::before,.cta.sec-angled::before{background:#181818;background-image:var(--dots-light);background-size:26px 26px}
-#services.sec-angled::before{background:var(--accent-tint)}
-#process.sec-angled::before,#vlogs.sec-angled::before{background:var(--bg-2)}
+#services.sec-angled::before{background-color:var(--accent-tint);background-image:var(--dots-dark);background-size:26px 26px}
+#process.sec-angled::before,#vlogs.sec-angled::before{background-color:var(--bg-2);background-image:var(--dots-dark);background-size:26px 26px}
 section>.wrap,footer>.wrap{position:relative;z-index:2}
 .stats.sec-angled .stat{position:relative;z-index:2}
 .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:60px;flex-wrap:wrap}

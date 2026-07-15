@@ -122,6 +122,18 @@ section{padding:108px 0}
 #process.sec-angled::before,#vlogs.sec-angled::before{background-color:var(--bg-2);background-image:var(--dots-dark);background-size:26px 26px}
 section>.wrap,footer>.wrap{position:relative;z-index:2}
 .stats.sec-angled .stat{position:relative;z-index:2}
+
+/* oversized MDH-mark watermark — the logo becomes a background motif,
+   bleeding off alternating edges of the major sections */
+#work,#insights{position:relative}
+#services::after,#work::after,#process::after,#insights::after,#vlogs::after{
+  content:"";position:absolute;top:50%;transform:translateY(-50%);
+  width:clamp(300px,40vw,540px);height:clamp(360px,50vw,660px);
+  -webkit-mask:url("/assets/img/mdh-mark.png") no-repeat center/contain;
+  mask:url("/assets/img/mdh-mark.png") no-repeat center/contain;
+  background:var(--accent);opacity:.08;z-index:0;pointer-events:none}
+#services::after,#process::after,#vlogs::after{right:clamp(-170px,-9vw,-50px)}
+#work::after,#insights::after{left:clamp(-170px,-9vw,-50px)}
 .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:60px;flex-wrap:wrap}
 .sec-head h2{font-family:var(--exp);font-weight:800;font-size:clamp(32px,4.6vw,64px);line-height:.98;letter-spacing:-.025em;text-transform:uppercase;max-width:16ch}
 .sec-head .lead{color:var(--muted);max-width:38ch;font-size:17px;font-weight:500}

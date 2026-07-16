@@ -1,2 +1,0 @@
-# Serve the Tina admin SPA for all /admin/* routes
-/admin/*  /admin/index.html  200

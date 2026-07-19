@@ -12,6 +12,9 @@ const latestVlogs = (await getCollection('vlogs'))
 
 const portfolioItems = (await getCollection('portfolio'))
   .filter(p => p.data.featured);
+// one tile per client for the "Trusted at scale" grid (dedupe RBC, Air Canada, etc.)
+const clients = [...new Map(portfolioItems.map(p => [p.data.client, p])).values()]
+  .sort((a, b) => a.data.client.localeCompare(b.data.client));
 
 function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
@@ -216,7 +219,7 @@ const services = [
       <p class="lead">50+ teams across Canada's largest enterprises and public institutions — where compliance and scale leave no margin for guesswork.</p>
     </div>
     <div class="cli reveal">
-      {portfolioItems.map(item => (
+      {clients.map(item => (
         <a href={`/portfolio/${item.slug}/`} class="c">
           <div class="nm">{item.data.client}</div>
         </a>

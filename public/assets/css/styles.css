@@ -302,6 +302,9 @@ footer{padding:72px 0 40px;background:var(--bg)}
 .prose li{margin-bottom:8px}
 .prose code{background:var(--bg-2);border:1px solid var(--line);border-radius:3px;padding:2px 6px;font-size:14px;color:var(--text);font-family:monospace}
 .prose hr{border:none;border-top:1px solid var(--line);margin:48px 0}
+.prose figure{margin:38px 0}
+.prose figure img,.prose>img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);background:var(--bg-2)}
+.prose figcaption{font-size:13.5px;color:var(--faint);font-weight:500;line-height:1.45;margin-top:12px;text-align:center;max-width:60ch;margin-left:auto;margin-right:auto}
 
 /* page header (listing pages) */
 .page-hd{padding:80px 0 60px;border-bottom:1px solid var(--line)}

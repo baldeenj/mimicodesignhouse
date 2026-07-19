@@ -8,6 +8,13 @@ const vlogs = (await getCollection('vlogs'))
 function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
+
+// Resolve a vlog thumbnail: explicit thumbnailUrl, else a YouTube still, else null.
+function vlogThumb(videoUrl: string, thumbnailUrl?: string): string | null {
+  if (thumbnailUrl) return thumbnailUrl;
+  const m = videoUrl.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})(?:[?&]|$)/);
+  return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+}
 ---
 
 <BaseLayout
@@ -21,20 +28,24 @@ function fmtDate(d: Date): string {
     </div>
 
     <div class="vlog-list">
-      {vlogs.map(vlog => (
-        <a href={`/vlogs/${vlog.slug}/`} class="vbox">
-          <div class="vth">
-            <div class="play">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      {vlogs.map(vlog => {
+        const thumb = vlogThumb(vlog.data.videoUrl, vlog.data.thumbnailUrl);
+        return (
+          <a href={`/vlogs/${vlog.slug}/`} class="vbox">
+            <div class="vth">
+              {thumb && <img class="vth-img" src={thumb} alt="" loading="lazy" />}
+              <div class="play">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              </div>
             </div>
-          </div>
-          <div class="vb">
-            <div class="tag">Design Vlog</div>
-            <h4>{vlog.data.title}</h4>
-            <div class="vm">EPISODE {vlog.data.episode} · {fmtDate(vlog.data.date).toUpperCase()}</div>
-          </div>
-        </a>
-      ))}
+            <div class="vb">
+              <div class="tag">Design Vlog</div>
+              <h4>{vlog.data.title}</h4>
+              <div class="vm">EPISODE {vlog.data.episode} · {fmtDate(vlog.data.date).toUpperCase()}</div>
+            </div>
+          </a>
+        );
+      })}
     </div>
   </div>
 </BaseLayout>

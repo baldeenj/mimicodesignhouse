@@ -14,6 +14,11 @@ featured: true
 
 A data-driven forecasting platform designed to help Air Canada's Network Planning and Revenue Management teams predict passenger demand. The tool transforms complex econometric models into an accessible decision-support system for analysts, planners, and executives.
 
+<figure>
+  <img src="/uploads/ac-econ-1.png" alt="Forecasting dashboard showing passenger-demand indicators charted by month." />
+  <figcaption>The forecasting dashboard — passenger-demand indicators by month, with confidence bands.</figcaption>
+</figure>
+
 ## The Challenge
 
 The organization struggled to bridge the gap between powerful statistical forecasting models and usable interfaces for non-technical users. Key obstacles included:
@@ -31,6 +36,11 @@ The organization struggled to bridge the gap between powerful statistical foreca
 - Integrated explainable AI patterns and "insight cards" translating model outputs into plain language
 - Created confidence bands and scenario comparison visualizations
 - Developed within Agile workflows using Azure DevOps
+
+<figure>
+  <img src="/uploads/ac-econ-2.png" alt="Scenario list with an expanded row showing a forecast scenario running." />
+  <figcaption>Scenario modelling — comparing forecasts with adjustable econometric variables (fuel cost, GDP, exchange rates).</figcaption>
+</figure>
 
 ## Outcomes
 

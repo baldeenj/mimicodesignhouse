@@ -14,6 +14,11 @@ featured: true
 
 An intelligent scheduling platform designed to optimize pilot training sessions and simulator utilization through machine learning integration. The system predicts training disruptions and provides actionable insights to account managers — in an environment where missed training slots and simulator downtime carry significant operational and financial cost.
 
+<figure>
+  <img src="/uploads/cae-1.png" alt="Pilot and simulator reservation management interface." />
+  <figcaption>The reservation and scheduling interface — pilot and simulator bookings in a single, structured view.</figcaption>
+</figure>
+
 ## The Challenge
 
 Pilot scheduling involves complex documentation and unpredictable variables. Missed training slots are costly due to the difficulty of finding qualified replacements quickly. Simulator time carries high value with limited availability — making every cancellation an outsized problem.
@@ -24,6 +29,11 @@ Pilot scheduling involves complex documentation and unpredictable variables. Mis
 - Integrated machine learning models trained on historical data to forecast cancellation likelihood
 - Implemented progressive disclosure patterns and smart form logic for intuitive data entry
 - Developed high-fidelity prototypes in Figma with iterative testing across international business units
+
+<figure>
+  <img src="/uploads/cae-2.png" alt="Machine-learning view flagging training sessions at risk of cancellation." />
+  <figcaption>Machine-learning insight — flagging sessions at risk of cancellation so teams can intervene early.</figcaption>
+</figure>
 
 ## Outcomes
 

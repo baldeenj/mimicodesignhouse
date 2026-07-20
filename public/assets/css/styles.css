@@ -282,7 +282,8 @@ footer{padding:72px 0 40px;background:var(--bg)}
 .back-link:hover{color:var(--accent)}
 
 /* content header (article / vlog / portfolio single pages) */
-.content-header{padding:48px 0 52px;border-bottom:1px solid var(--line);max-width:860px}
+.content-header{padding:48px 0 52px;position:relative;isolation:isolate}
+.content-header>*{max-width:860px}
 .content-header .tag{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
 .content-header h1{font-family:var(--exp);font-weight:800;font-size:clamp(30px,5vw,60px);line-height:.96;letter-spacing:-.03em;text-transform:uppercase;margin-bottom:24px}
 .content-header .meta{color:var(--faint);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
@@ -313,7 +314,15 @@ footer{padding:72px 0 40px;background:var(--bg)}
 .prose figure.tall img{max-height:600px;object-fit:cover;object-position:top}
 
 /* page header (listing pages) */
-.page-hd{padding:80px 0 60px;border-bottom:1px solid var(--line)}
+.page-hd{padding:80px 0 60px;position:relative;isolation:isolate}
+/* interior page headers — cobalt-tinted band with dot-grid (logo mark now lives in the parallax background) */
+.page-hd::before,.content-header::before{content:"";position:absolute;z-index:-1;top:0;bottom:0;left:calc(50% - 50vw);width:100vw;background-color:var(--accent-tint);background-image:var(--dots-dark);background-size:26px 26px;border-bottom:1px solid var(--line)}
+/* interior-page parallax background — fixed cobalt glow + a drifting logo mark (shown only on interior pages) */
+.page-bg{display:none}
+body:has(.page-hd) .page-bg,body:has(.content-header) .page-bg{display:block;position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.page-bg::before{content:"";position:absolute;inset:0;background:radial-gradient(48% 42% at 100% 22%,rgba(36,86,199,.10),transparent 62%),radial-gradient(46% 40% at -5% 96%,rgba(36,86,199,.08),transparent 60%)}
+.page-bg-mark{position:absolute;right:-10vw;top:46vh;width:min(58vw,680px);height:min(70vw,840px);will-change:transform;background:var(--accent);opacity:.05;-webkit-mask:url("/assets/img/mdh-mark.png") no-repeat center/contain;mask:url("/assets/img/mdh-mark.png") no-repeat center/contain}
+@media(prefers-reduced-motion:reduce){.page-bg-mark{transform:none!important}}
 .page-hd h1{font-family:var(--exp);font-weight:800;font-size:clamp(38px,5vw,76px);line-height:.92;letter-spacing:-.035em;text-transform:uppercase}
 .page-hd .lead{color:var(--muted);font-size:18px;font-weight:500;max-width:40ch;margin-top:20px}
 

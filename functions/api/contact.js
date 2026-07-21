@@ -77,7 +77,7 @@ export async function onRequestPost({ request, env }) {
   }
   if (!verify.success) {
     console.error("Turnstile verify failed:", JSON.stringify(verify));
-    return json({ error: "Verification failed [" + ((verify["error-codes"] || []).join(", ") || "unknown") + "]" }, 403);
+    return json({ error: "Verification failed. Please refresh and try again." }, 403);
   }
 
   // 2. Send the email via Resend.

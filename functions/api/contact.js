@@ -76,7 +76,8 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "Could not verify the challenge. Please try again." }, 502);
   }
   if (!verify.success) {
-    return json({ error: "Verification failed. Please refresh and try again." }, 403);
+    console.error("Turnstile verify failed:", JSON.stringify(verify));
+    return json({ error: "Verification failed [" + ((verify["error-codes"] || []).join(", ") || "unknown") + "]" }, 403);
   }
 
   // 2. Send the email via Resend.

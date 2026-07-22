@@ -236,12 +236,93 @@ const services = [
       <h2>How we work</h2>
       <p class="lead">A collaborative, evidence-based method built to drive alignment and accelerate execution.</p>
     </div>
-    <div class="proc reveal">
-      <div class="prow"><div class="pn">01</div><h4>Discovery</h4><p>Understand your challenges, goals, and current state through stakeholder interviews and context analysis.</p></div>
-      <div class="prow"><div class="pn">02</div><h4>Research &amp; Analysis</h4><p>Apply evidence-based research and HCI principles to uncover needs and surface real opportunities.</p></div>
-      <div class="prow"><div class="pn">03</div><h4>Co-Creation</h4><p>Design with your team to balance usability, technical feasibility, and business impact.</p></div>
-      <div class="prow"><div class="pn">04</div><h4>Implementation</h4><p>Translate insight into action and coach your team through execution for sustainable success.</p></div>
+    <div class="proc acc reveal">
+      <div class="prow open">
+        <button type="button" class="prow-hd" aria-expanded="true" aria-controls="proc-1">
+          <span class="pn">01</span>
+          <span class="pt"><span class="ptitle">Discovery</span><span class="psub">A shared, evidence-grounded understanding of the problem.</span></span>
+          <span class="pdur">1–2 weeks</span>
+          <span class="pchev" aria-hidden="true"></span>
+        </button>
+        <div class="prow-body" id="proc-1" role="region"><div class="prow-inner"><div class="prow-content">
+          <p>Understand your challenges, goals, and current state through stakeholder interviews and context analysis.</p>
+          <div class="pgroup"><div class="plabel">Artefacts</div><div class="parts"><span class="part">Stakeholder interviews</span><span class="part">Current-state audit</span><span class="part">Success metrics</span><span class="part">Assumptions &amp; risks</span></div></div>
+          <div class="pgroup"><div class="plabel">Tools</div><div class="parts tools"><span class="part">Miro</span><span class="part">Dovetail</span><span class="part">Notion</span></div></div>
+        </div></div></div>
+      </div>
+      <div class="prow">
+        <button type="button" class="prow-hd" aria-expanded="false" aria-controls="proc-2">
+          <span class="pn">02</span>
+          <span class="pt"><span class="ptitle">Research &amp; Analysis</span><span class="psub">Validated needs and a prioritized set of opportunities.</span></span>
+          <span class="pdur">2–4 weeks</span>
+          <span class="pchev" aria-hidden="true"></span>
+        </button>
+        <div class="prow-body" id="proc-2" role="region"><div class="prow-inner"><div class="prow-content">
+          <p>Apply evidence-based research and HCI principles to uncover needs and surface real opportunities.</p>
+          <div class="pgroup"><div class="plabel">Artefacts</div><div class="parts"><span class="part">Research findings</span><span class="part">Personas &amp; journey maps</span><span class="part">Service blueprints</span><span class="part">Opportunity backlog</span></div></div>
+          <div class="pgroup"><div class="plabel">Tools</div><div class="parts tools"><span class="part">Dovetail</span><span class="part">Maze</span><span class="part">Figma</span></div></div>
+        </div></div></div>
+      </div>
+      <div class="prow">
+        <button type="button" class="prow-hd" aria-expanded="false" aria-controls="proc-3">
+          <span class="pn">03</span>
+          <span class="pt"><span class="ptitle">Co-Creation</span><span class="psub">Tested, buildable designs the whole team is aligned behind.</span></span>
+          <span class="pdur">3–6 weeks</span>
+          <span class="pchev" aria-hidden="true"></span>
+        </button>
+        <div class="prow-body" id="proc-3" role="region"><div class="prow-inner"><div class="prow-content">
+          <p>Design with your team to balance usability, technical feasibility, and business impact.</p>
+          <div class="pgroup"><div class="plabel">Artefacts</div><div class="parts"><span class="part">Wireframes &amp; prototypes</span><span class="part">Information architecture</span><span class="part">Design-system foundations</span><span class="part">Co-design workshops</span></div></div>
+          <div class="pgroup"><div class="plabel">Tools</div><div class="parts tools"><span class="part">Figma</span><span class="part">FigJam</span><span class="part">Maze</span></div></div>
+        </div></div></div>
+      </div>
+      <div class="prow">
+        <button type="button" class="prow-hd" aria-expanded="false" aria-controls="proc-4">
+          <span class="pn">04</span>
+          <span class="pt"><span class="ptitle">Implementation</span><span class="psub">A shipped experience — accessible, on-brand, true to intent.</span></span>
+          <span class="pdur">Ongoing</span>
+          <span class="pchev" aria-hidden="true"></span>
+        </button>
+        <div class="prow-body" id="proc-4" role="region"><div class="prow-inner"><div class="prow-content">
+          <p>Translate insight into action and coach your team through execution for sustainable success.</p>
+          <div class="pgroup"><div class="plabel">Artefacts</div><div class="parts"><span class="part">Annotated specs &amp; handoff</span><span class="part">Accessibility (WCAG) checks</span><span class="part">Design QA</span><span class="part">Usability test results</span></div></div>
+          <div class="pgroup"><div class="plabel">Tools</div><div class="parts tools"><span class="part">Figma</span><span class="part">Storybook</span><span class="part">Jira</span></div></div>
+        </div></div></div>
+      </div>
+      <div class="prow">
+        <button type="button" class="prow-hd" aria-expanded="false" aria-controls="proc-5">
+          <span class="pn">05</span>
+          <span class="pt"><span class="ptitle">Measure &amp; Iterate</span><span class="psub">Proof of impact and a clear path for what comes next.</span></span>
+          <span class="pdur">Continuous</span>
+          <span class="pchev" aria-hidden="true"></span>
+        </button>
+        <div class="prow-body" id="proc-5" role="region"><div class="prow-inner"><div class="prow-content">
+          <p>Track the outcomes that matter, learn from real usage, and feed insight back into the next cycle.</p>
+          <div class="pgroup"><div class="plabel">Artefacts</div><div class="parts"><span class="part">Success-metric dashboard</span><span class="part">Post-launch analysis</span><span class="part">Iteration backlog</span><span class="part">Retrospective</span></div></div>
+          <div class="pgroup"><div class="plabel">Tools</div><div class="parts tools"><span class="part">GA4</span><span class="part">Hotjar</span><span class="part">Looker</span></div></div>
+        </div></div></div>
+      </div>
     </div>
+    <script is:inline>
+      (function () {
+        var acc = document.querySelector(".proc.acc");
+        if (!acc) return;
+        acc.querySelectorAll(".prow-hd").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var row = btn.closest(".prow");
+            var wasOpen = row.classList.contains("open");
+            acc.querySelectorAll(".prow.open").forEach(function (r) {
+              r.classList.remove("open");
+              r.querySelector(".prow-hd").setAttribute("aria-expanded", "false");
+            });
+            if (!wasOpen) {
+              row.classList.add("open");
+              btn.setAttribute("aria-expanded", "true");
+            }
+          });
+        });
+      })();
+    </script>
   </div>
 </section>
 

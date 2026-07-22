@@ -5,5 +5,24 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
-  }
+  },
+  // Newsletter auto-send: runs hourly to check the article + YouTube feeds.
+  "triggers": {
+    "crons": ["0 * * * *"]
+  },
+  // Non-secret config. (RESEND_API_KEY stays a dashboard secret.)
+  "vars": {
+    "SITE_URL": "https://www.mimicodesignhouse.com",
+    "YOUTUBE_CHANNEL_ID": "UCvFk-6u5VeWw8UMEaesefOA",
+    "NEWSLETTER_FROM": "Mimico Design House <hello@mimicodesignhouse.com>",
+    "RESEND_AUDIENCE_ID": "76d4e428-c310-4c83-ba2b-eaec1f23221e"
+  },
+  // Tracks which articles/videos have already been emailed.
+  // Create with: npx wrangler kv namespace create NEWSLETTER_KV
+  "kv_namespaces": [
+    {
+      "binding": "NEWSLETTER_KV",
+      "id": "af19beca57a94529ba430aa1a5f76d4d"
+    }
+  ]
 }

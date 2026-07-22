@@ -51,6 +51,20 @@ const {
 
 <footer>
   <div class="wrap">
+    <div class="nl">
+      <div class="nl-copy">
+        <h5>Stay in the loop</h5>
+        <p>Get new articles and videos in your inbox as they drop. No noise, no spam — unsubscribe anytime.</p>
+      </div>
+      <form id="nlForm" class="nl-form" novalidate>
+        <input type="text" name="website" class="nl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="nl-row">
+          <input type="email" name="email" required autocomplete="email" maxlength="200" placeholder="you@company.com" aria-label="Your email address" />
+          <button type="submit" class="btn btn-primary">Subscribe <span class="arr">→</span></button>
+        </div>
+        <p class="nl-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
     <div class="foot">
       <div>
         <img class="foot-logo" src="/assets/img/mdh-logo.png" alt="Mimico Design House" />
@@ -66,6 +80,50 @@ const {
     </div>
   </div>
 </footer>
+
+<script is:inline>
+(function () {
+  "use strict";
+  var form = document.getElementById("nlForm");
+  if (!form) return;
+  var status = form.querySelector(".nl-status");
+  var btn = form.querySelector("button[type=submit]");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (form.dataset.sending) return;
+    var email = (form.querySelector("[name=email]") || {}).value || "";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) {
+      status.textContent = "Please enter a valid email address.";
+      status.className = "nl-status is-err";
+      return;
+    }
+    form.dataset.sending = "1";
+    btn.disabled = true;
+    status.textContent = "Subscribing…";
+    status.className = "nl-status";
+    fetch("/api/subscribe", { method: "POST", body: new FormData(form) })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (res.ok && res.d && res.d.ok) {
+          form.reset();
+          status.textContent = "You're in! Check your inbox for a welcome note.";
+          status.className = "nl-status is-ok";
+        } else {
+          status.textContent = (res.d && res.d.error) || "Something went wrong. Please try again.";
+          status.className = "nl-status is-err";
+        }
+      })
+      .catch(function () {
+        status.textContent = "Network error. Please try again.";
+        status.className = "nl-status is-err";
+      })
+      .finally(function () {
+        delete form.dataset.sending;
+        btn.disabled = false;
+      });
+  });
+})();
+</script>
 
 <script is:inline>
 (function () {

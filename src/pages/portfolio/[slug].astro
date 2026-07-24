@@ -37,4 +37,70 @@ const { Content } = await item.render();
       </div>
     </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var body = document.querySelector(".content-body");
+      var prose = body && body.querySelector(".prose");
+      if (!prose) return;
+      var figures = [].slice.call(prose.querySelectorAll(":scope > figure"));
+      var wide = window.matchMedia("(min-width: 1000px)").matches;
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // Only enhance content-rich studies on wide screens; otherwise keep the
+      // normal inline-figure reading layout (the graceful fallback).
+      if (figures.length < 2 || !wide) return;
+
+      // Build the sticky media panel; lift each figure's image + caption into it.
+      var media = document.createElement("aside");
+      media.className = "cs-media";
+      var inner = document.createElement("div");
+      inner.className = "cs-media-inner";
+      media.appendChild(inner);
+      var count = document.createElement("div");
+      count.className = "cs-count";
+      count.innerHTML = '<span class="cs-cur">1</span> / ' + figures.length;
+      media.appendChild(count);
+
+      var markers = [];
+      figures.forEach(function (fig, i) {
+        var mk = document.createElement("span");
+        mk.className = "cs-anchor";
+        mk.setAttribute("data-i", i);
+        fig.parentNode.replaceChild(mk, fig);
+        markers.push(mk);
+        var item = document.createElement("figure");
+        item.className = "cs-media-item" + (i === 0 ? " active" : "");
+        item.innerHTML = fig.innerHTML;
+        inner.appendChild(item);
+      });
+      body.appendChild(media);
+      body.classList.add("cs-on");
+
+      var items = [].slice.call(inner.querySelectorAll(".cs-media-item"));
+      var cur = count.querySelector(".cs-cur");
+      var active = -1;
+      function setActive(i) {
+        if (i === active) return;
+        active = i;
+        items.forEach(function (it, k) { it.classList.toggle("active", k === i); });
+        cur.textContent = i + 1;
+      }
+      var ticking = false;
+      function update() {
+        ticking = false;
+        var line = window.innerHeight * 0.5;
+        // Active image = the first figure at/below the reading line (the one you're
+        // scrolling toward); once past the last marker, hold on the final image.
+        var next = markers.length - 1;
+        for (var i = 0; i < markers.length; i++) {
+          if (markers[i].getBoundingClientRect().top > line) { next = i; break; }
+        }
+        setActive(next);
+      }
+      function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+      update();
+    })();
+  </script>
 </BaseLayout>

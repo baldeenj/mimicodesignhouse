@@ -2,6 +2,7 @@
 title: "Bringing Ideas to Life: My Journey as a Product Architect"
 tag: Design
 date: 2025-10-31
+heroImage: /uploads/hero-bringing-ideas-to-life-product-architect.jpg
 summary: "Product architecture lives at the intersection of strategy, design, and technology. Here's how I think about the role, the skills it demands, and what it means to be the person responsible for making complex ideas coherent."
 ---
 

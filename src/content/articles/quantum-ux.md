@@ -2,6 +2,7 @@
 title: "Exploring Quantum User Experience: Future of Human-Computer Interaction"
 tag: HCI
 date: 2026-02-10
+heroImage: /uploads/hero-quantum-ux.jpg
 ---
 
 ## Introduction

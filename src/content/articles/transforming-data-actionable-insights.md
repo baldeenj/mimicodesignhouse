@@ -2,6 +2,7 @@
 title: "Transforming Data into Actionable Insights through Design"
 tag: Design
 date: 2025-10-31
+heroImage: /uploads/hero-transforming-data-actionable-insights.jpg
 ---
 
 ## Introduction

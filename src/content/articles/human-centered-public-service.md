@@ -2,6 +2,7 @@
 title: "Human-Centered Public Service: Making Government Work for Everyone"
 tag: UX Research
 date: 2025-12-03
+heroImage: /uploads/hero-human-centered-public-service.jpg
 summary: "Government digital services fail not from lack of resources but from designing for the system rather than the citizen. Human-centered design principles applied to public service can make government work for everyone — including the most vulnerable."
 ---
 

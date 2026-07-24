@@ -2,6 +2,7 @@
 title: "The Principles of Quantum Computing Explained"
 tag: Quantum Computing
 date: 2025-10-01
+heroImage: /uploads/hero-principles-quantum-computing.jpg
 summary: "What makes a quantum computer quantum? This primer explains superposition, entanglement, interference, and decoherence — the four foundational principles that give quantum computing its distinctive character and power."
 ---
 

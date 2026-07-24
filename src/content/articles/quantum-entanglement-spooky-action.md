@@ -2,6 +2,7 @@
 title: "Quantum Entanglement: 'Spooky Action at a Distance'"
 tag: Quantum Computing
 date: 2025-11-12
+heroImage: /uploads/hero-quantum-entanglement-spooky-action.jpg
 summary: "Einstein dismissed entanglement as 'spooky action at a distance' — a phrase meant as criticism that became a description of one of nature's most verified phenomena. This article unpacks what entanglement is, what it isn't, and why it's central to quantum computing."
 ---
 

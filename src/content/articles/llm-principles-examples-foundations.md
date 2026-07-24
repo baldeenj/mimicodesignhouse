@@ -2,6 +2,7 @@
 title: "Large Language Models: Principles, Examples, and Technical Foundations"
 tag: Artificial Intelligence
 date: 2025-08-22
+heroImage: /uploads/hero-llm-principles-examples-foundations.jpg
 summary: "A structured introduction to what large language models are, how they work, where they succeed, and where they reliably fail — grounded in the technical principles that explain their behavior."
 ---
 

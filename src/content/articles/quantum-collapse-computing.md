@@ -2,6 +2,7 @@
 title: "Exploring the Implications of Quantum Collapse on Computing"
 tag: Quantum Computing
 date: 2025-11-22
+heroImage: /uploads/hero-quantum-collapse-computing.jpg
 summary: "Quantum computers derive their power from superposition — but the moment you measure a qubit, the wave function collapses. Understanding how this fundamental constraint shapes quantum computing architecture is essential to understanding the field."
 ---
 

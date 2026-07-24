@@ -2,6 +2,7 @@
 title: "Applying the EPIS Framework to Dashboard Design and Implementation"
 tag: Design
 date: 2025-10-01
+heroImage: /uploads/hero-epis-framework-dashboard-design.jpg
 summary: "The EPIS framework — Explain, Predict, Inform, Support — provides a principled way to evaluate whether a dashboard is doing the right job. Here's how to apply it in practice, from discovery through delivery."
 ---
 

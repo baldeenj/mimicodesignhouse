@@ -2,6 +2,7 @@
 title: "The Quantum Realm: Our Connection to the Universe"
 tag: Quantum Computing
 date: 2025-10-31
+heroImage: /uploads/hero-quantum-realm-connection-universe.jpg
 summary: "Quantum mechanics isn't just about computers and cryptography — it describes the fabric of reality at its smallest scales. Understanding the quantum realm changes how we understand matter, energy, and our own place in the cosmos."
 ---
 

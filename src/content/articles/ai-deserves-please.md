@@ -2,6 +2,7 @@
 title: "Sorry, But AI Deserves 'Please' Too!"
 tag: Artificial Intelligence
 date: 2026-03-13
+heroImage: /uploads/hero-ai-deserves-please.jpg
 summary: "As we increasingly lean on AI as a trusted ally in our professional and personal lives, we must ponder the implications of our reliance on their capacity to comprehend and craft natural language. What does this mean for our autonomy, creativity, and the very essence of human connection?"
 ---
 

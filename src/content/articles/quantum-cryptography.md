@@ -2,6 +2,7 @@
 title: "Understanding Quantum Cryptography: The Key to Digital Trust"
 tag: Security
 date: 2026-03-13
+heroImage: /uploads/hero-quantum-cryptography.jpg
 summary: "In facing the challenges posed by quantum cryptography, the importance of human-centred design and thoughtful product development cannot be overstated. Ultimately, the value of quantum-secure systems lies not in the complexity of their mathematics, but in the confidence they inspire in users."
 ---
 

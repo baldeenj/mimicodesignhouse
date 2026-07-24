@@ -2,6 +2,7 @@
 title: "Learning to Lead in the Wilderness"
 tag: Design
 date: 2025-08-21
+heroImage: /uploads/hero-learning-to-lead-wilderness.jpg
 summary: "Leadership lessons rarely come from classrooms. Some of the most formative ones come from the wilderness — where conditions are real, consequences are immediate, and the team is everything. Reflections on what the backcountry teaches about leading under uncertainty."
 ---
 

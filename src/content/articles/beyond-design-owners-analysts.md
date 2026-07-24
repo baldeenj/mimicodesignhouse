@@ -2,6 +2,7 @@
 title: "Beyond Design: Why Top Product Designers Think Like Owners and Analysts"
 tag: Design
 date: 2025-05-28
+heroImage: /uploads/hero-beyond-design-owners-analysts.jpg
 ---
 
 The rapid integration of Artificial Intelligence (AI) and Machine Learning (ML) capabilities into products and applications necessitates a shift in the role of Product Designers.

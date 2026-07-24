@@ -2,6 +2,7 @@
 title: "Quantum Revolution: How Max Planck Tapped Into the Universe's Zero-Point Mysteries"
 tag: Quantum Computing
 date: 2025-12-29
+heroImage: /uploads/hero-max-planck-zero-point-energy.jpg
 ---
 
 **Unveiling the Ever-Vibrant Fabric of Reality**

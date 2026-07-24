@@ -2,6 +2,7 @@
 title: "Designing with Empathy: A Universal Practice for Meaningful Collaboration"
 tag: Design
 date: 2025-07-12
+heroImage: /uploads/hero-designing-with-empathy.jpg
 summary: "Empathy in design isn't a soft skill — it's a discipline. The capacity to genuinely inhabit another person's perspective, constraints, and context is what separates design that serves people from design that serves the designer's assumptions."
 ---
 

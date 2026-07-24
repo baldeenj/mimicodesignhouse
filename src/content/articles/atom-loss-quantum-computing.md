@@ -2,6 +2,7 @@
 title: "Atom Loss: A Bottleneck in Quantum Computing"
 tag: Quantum Computing
 date: 2025-10-31
+heroImage: /uploads/hero-atom-loss-quantum-computing.jpg
 summary: "Neutral-atom quantum computers are one of the most promising near-term architectures — but atom loss, when qubits physically disappear from the system mid-computation, remains a key obstacle to scaling. Here's what's being done about it."
 ---
 

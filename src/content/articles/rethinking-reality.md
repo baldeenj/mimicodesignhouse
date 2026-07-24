@@ -2,6 +2,7 @@
 title: "Rethinking Reality: The Unwritten Story of Time"
 tag: Theory
 date: 2026-02-10
+heroImage: /uploads/hero-rethinking-reality.jpg
 summary: "The universe is not a closed book, but rather a narrative in progress—its future pages unwritten, its history ever-expanding. The digits that define time, instead of being predetermined, seem to emerge in concert with our unfolding experience, hinting at a reality that is both participatory and creative."
 ---
 

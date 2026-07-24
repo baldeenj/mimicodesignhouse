@@ -2,6 +2,7 @@
 title: "How My Human-Computer Interaction (HCI) Research Shaped My Design Career"
 tag: HCI
 date: 2025-08-12
+heroImage: /uploads/hero-hci-research-design-career.jpg
 summary: "HCI research gave me something design school alone doesn't teach: a rigorous method for understanding how people actually behave with technology, not just how they say they do. Here's how that foundation shaped the way I approach design work."
 ---
 

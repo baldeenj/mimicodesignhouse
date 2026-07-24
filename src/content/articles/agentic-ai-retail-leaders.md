@@ -2,6 +2,7 @@
 title: "Understanding Agentic AI: Key Insights for Retail Leaders"
 tag: Artificial Intelligence
 date: 2025-12-14
+heroImage: /uploads/hero-agentic-ai-retail-leaders.jpg
 summary: "Most solutions marketed as 'agentic AI' are actually Autonomous Workflow Orchestration. This distinction matters enormously for retail leaders making infrastructure investments, governance decisions, and talent choices today."
 ---
 

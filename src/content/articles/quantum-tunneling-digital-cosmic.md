@@ -2,6 +2,7 @@
 title: "Beyond Barriers: How Quantum Tunneling Powers Our Digital and Cosmic World"
 tag: Quantum Computing
 date: 2026-01-28
+heroImage: /uploads/hero-quantum-tunneling-digital-cosmic.jpg
 ---
 
 **From memory devices to the heart of stars**

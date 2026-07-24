@@ -2,6 +2,7 @@
 title: "Transformative Discovery: Integrating Coaching Principles for Project Success"
 tag: Design
 date: 2025-12-29
+heroImage: /uploads/hero-transformative-discovery-coaching.jpg
 ---
 
 **The Human-Centered Approach to Discovery**

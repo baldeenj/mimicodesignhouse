@@ -2,6 +2,7 @@
 title: "Retail Is Entering Its Agentic AI Era"
 tag: Artificial Intelligence
 date: 2025-08-21
+heroImage: /uploads/hero-retail-agentic-ai-era.jpg
 summary: "Retailers deploying AI chatbots for customer service are only at the beginning. The next wave — agentic AI that acts across systems, personalizes at scale, and optimizes in real time — will fundamentally reshape commerce operations and customer experience."
 ---
 

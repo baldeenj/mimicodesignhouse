@@ -2,6 +2,7 @@
 title: "The Power of Optimism in Design: Lessons from Sales and Personal Experience"
 tag: Design
 date: 2025-08-12
+heroImage: /uploads/hero-optimism-design-lessons.jpg
 summary: "Optimism is underrated as a professional skill. In design — where feedback is constant, ambiguity is the default, and the gap between vision and execution is always uncomfortable — the ability to maintain a generative outlook is a genuine competitive advantage."
 ---
 

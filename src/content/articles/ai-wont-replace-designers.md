@@ -2,6 +2,7 @@
 title: "Why AI Won't Replace Designers: The Human-Centered Core of Design"
 tag: Design
 date: 2025-07-03
+heroImage: /uploads/hero-ai-wont-replace-designers.jpg
 summary: "AI can generate interfaces, write copy, and produce design variations at scale. What it can't do is decide what to design, understand who it's for, or take responsibility for whether it works. The human-centered core of design is where human designers remain irreplaceable."
 ---
 

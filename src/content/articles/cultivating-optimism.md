@@ -2,6 +2,7 @@
 title: "Cultivating Optimism: A Skill for Success"
 tag: Design
 date: 2026-01-28
+heroImage: /uploads/hero-cultivating-optimism.jpg
 ---
 
 Optimism is a remarkable and transformative belief that invites us to view our circumstances through a lens of potential and hope. It asserts that improvement is not just a distant dream but a reality within our grasp, even in the face of complex challenges and significant constraints. Instead of waiting for absolute certainty to take action, we are encouraged to trust that clarity and solutions will emerge through our engagement with the world around us.

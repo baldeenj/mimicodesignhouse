@@ -2,6 +2,7 @@
 title: "How To Build Large Language Models"
 tag: Artificial Intelligence
 date: 2025-08-30
+heroImage: /uploads/hero-how-to-build-large-language-models.jpg
 summary: "From tokenization to RLHF, this article walks through the full pipeline behind modern large language models — what goes into building them, why each step matters, and what it all means for the AI systems shaping our world."
 ---
 

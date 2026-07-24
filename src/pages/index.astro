@@ -336,11 +336,18 @@ const services = [
     <div class="home-grid reveal">
       {articles.map(article => (
         <a href={`/articles/${article.slug}/`} class="ins-card">
-          <div class="tag">{article.data.tag}</div>
-          <h4>{article.data.title}</h4>
-          <div class="ins-card-ft">
-            <span class="dt">{fmtDate(article.data.date)}</span>
-            <span class="arr">→</span>
+          <div class="ins-thumb">
+            {article.data.heroImage && (
+              <img src={article.data.heroImage} alt="" loading="lazy" decoding="async" />
+            )}
+          </div>
+          <div class="ins-body">
+            <div class="tag">{article.data.tag}</div>
+            <h4>{article.data.title}</h4>
+            <div class="ins-card-ft">
+              <span class="dt">{fmtDate(article.data.date)}</span>
+              <span class="arr">→</span>
+            </div>
           </div>
         </a>
       ))}

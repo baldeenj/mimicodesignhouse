@@ -20,20 +20,23 @@ function fmtDate(d: Date): string {
       <p class="lead">Research, AI, systems thinking, and practice — perspectives from the studio.</p>
     </div>
 
-    <div class="article-list">
+    <div class="article-grid">
       {articles.map(article => (
-        <a href={`/articles/${article.slug}/`} class="ac-row">
-          <div class="ac-thumb">
+        <a href={`/articles/${article.slug}/`} class="art-card">
+          <div class="art-thumb">
             {article.data.heroImage && (
               <img src={article.data.heroImage} alt="" loading="lazy" decoding="async" />
             )}
           </div>
-          <div class="ac-body">
+          <div class="art-body">
             <div class="tag">{article.data.tag}</div>
             <h2>{article.data.title}</h2>
             {article.data.summary && <p>{article.data.summary}</p>}
+            <div class="art-foot">
+              <span class="dt">{fmtDate(article.data.date)}</span>
+              <span class="arr">→</span>
+            </div>
           </div>
-          <div class="dt">{fmtDate(article.data.date)}</div>
         </a>
       ))}
     </div>

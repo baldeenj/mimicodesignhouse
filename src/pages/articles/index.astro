@@ -23,7 +23,12 @@ function fmtDate(d: Date): string {
     <div class="article-list">
       {articles.map(article => (
         <a href={`/articles/${article.slug}/`} class="ac-row">
-          <div>
+          <div class="ac-thumb">
+            {article.data.heroImage && (
+              <img src={article.data.heroImage} alt="" loading="lazy" decoding="async" />
+            )}
+          </div>
+          <div class="ac-body">
             <div class="tag">{article.data.tag}</div>
             <h2>{article.data.title}</h2>
             {article.data.summary && <p>{article.data.summary}</p>}

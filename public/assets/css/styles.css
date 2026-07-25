@@ -418,9 +418,20 @@ body:has(.page-hd) .page-bg,body:has(.content-header) .page-bg{display:block;pos
 .vlog-list{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:60px 0 108px}
 
 /* portfolio listing */
-.port-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:60px 0 108px}
-.port-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:36px 32px 30px;transition:all .22s;color:inherit;text-decoration:none;min-height:270px;box-shadow:var(--shadow)}
-.port-card:hover{transform:translateY(-4px);border-color:var(--line-2);box-shadow:var(--shadow-lg)}
+/* portfolio — staggered masonry wall; cards float in from the lower-right on scroll */
+.port-mosaic{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start;padding:72px 0 128px}
+.pcol{display:flex;flex-direction:column;gap:20px}
+.port-card{--fx:none;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;transform:var(--fx);will-change:transform,opacity;transition:border-color .22s,box-shadow .22s;color:inherit;text-decoration:none;box-shadow:var(--shadow)}
+.port-card:hover{border-color:var(--line-2);box-shadow:var(--shadow-lg)}
+/* hide until the scroll effect places them (only when JS enables it) */
+.port-mosaic.fx-on .port-card{opacity:0}
+.port-thumb{aspect-ratio:16/9;overflow:hidden;background:var(--accent-tint);border-bottom:1px solid var(--line)}
+.port-thumb.ar-wide{aspect-ratio:16/10}
+.port-thumb.ar-mid{aspect-ratio:4/3}
+.port-thumb.ar-tall{aspect-ratio:1/1}
+.port-thumb img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;transition:transform .45s ease}
+.port-card:hover .port-thumb img{transform:scale(1.05)}
+.port-body{display:flex;flex-direction:column;flex:1;padding:26px 28px 28px}
 .port-card .cl{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
 .port-card h2{font-family:var(--exp);font-weight:700;font-size:22px;letter-spacing:-.01em;line-height:1.1;flex:1}
 .port-card p{color:var(--muted);font-size:14.5px;font-weight:500;margin-top:16px;line-height:1.5}
@@ -434,5 +445,6 @@ body:has(.page-hd) .page-bg,body:has(.content-header) .page-bg{display:block;pos
 @media(max-width:980px){
   .content-body{grid-template-columns:1fr;gap:0}
   .vlog-list{grid-template-columns:1fr}
-  .port-grid{grid-template-columns:1fr}
 }
+@media(max-width:900px){.port-mosaic{grid-template-columns:repeat(2,1fr)}.pcol{display:contents}}
+@media(max-width:560px){.port-mosaic{grid-template-columns:1fr}}

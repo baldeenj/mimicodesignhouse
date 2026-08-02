@@ -23,6 +23,34 @@ portfolio.forEach((item, i) => {
   const ci = Math.min(Math.floor(i / chunk), 2);
   columns[ci].push({ item, ar: AR[i % AR.length], thumb: cardThumb(item) });
 });
+
+// Curated trio for the sticky featured showcase at the top (aviation/data,
+// fintech, public sector — showing range). Edit slugs to re-feature.
+// Headline metric per study, curated from each case study's Outcomes.
+const featuredSlugs = ['air-canada', 'rbc-fx', 'government-of-ontario'];
+// Headline metric per case study, curated from each study's Outcomes. Shared by
+// the featured showcase and the card wall. (CAE, Milk.org and RBC Autodeposit
+// report qualitative outcomes, so they intentionally have no metric.)
+const metrics: Record<string, { value: string; label: string }> = {
+  'air-canada': { value: '40%', label: 'faster forecast reviews' },
+  'air-canada-otp': { value: '20–25%', label: 'faster delay response' },
+  'canada-post': { value: '30%+', label: 'faster tracking & locating' },
+  'canada-post-ipad': { value: '30%+', label: 'faster parcel tracking' },
+  'canada-post-windows': { value: '30%+', label: 'faster parcel tracking' },
+  'cibc': { value: '35%', label: 'faster account selection' },
+  'cibc-credit-card': { value: '32%', label: 'higher completion rate' },
+  'government-of-ontario': { value: '45%', label: 'reduction in time-to-task' },
+  'rbc-express-dashboard': { value: '30%', label: 'faster task completion' },
+  'rbc-forgot-password': { value: '40%', label: 'faster credential resets' },
+  'rbc-fx': { value: '~25%', label: 'faster transaction completion' },
+  'td': { value: '22%', label: 'higher user satisfaction' },
+  'td-auto-insurance': { value: '35%', label: 'faster quote completion' },
+  'td-trader': { value: '25%', label: 'faster trade execution' },
+};
+const featured = featuredSlugs
+  .map((s) => portfolio.find((p) => p.slug === s))
+  .filter((p): p is (typeof portfolio)[number] => Boolean(p))
+  .map((item) => ({ item, thumb: cardThumb(item), metric: metrics[item.slug] }));
 ---
 
 <BaseLayout
@@ -33,6 +61,39 @@ portfolio.forEach((item, i) => {
     <div class="page-hd">
       <h1>Selected Work</h1>
       <p class="lead">Engagements across fintech, govtech, and enterprise SaaS — where the stakes are real and the margin for error is low.</p>
+    </div>
+
+    <div class="feat-showcase">
+      {featured.map(({ item, thumb, metric }, i) => (
+        <section class="feat">
+          <a href={`/portfolio/${item.slug}/`} class="feat-media">
+            {thumb && <img src={thumb} alt="" loading="lazy" decoding="async" />}
+          </a>
+          <div class="feat-body reveal">
+            <div class="feat-kick"><span class="feat-no">{String(i + 1).padStart(2, '0')}</span> Featured</div>
+            <div class="cl">{item.data.client}</div>
+            <h2>{item.data.title}</h2>
+            <p>{item.data.description}</p>
+            {metric && (
+              <div class="feat-metric">
+                <span class="feat-metric-val">{metric.value}</span>
+                <span class="feat-metric-lab">{metric.label}</span>
+              </div>
+            )}
+            {item.data.tags.length > 0 && (
+              <div class="tags">
+                {item.data.tags.slice(0, 4).map(tag => <span class="tg">{tag}</span>)}
+              </div>
+            )}
+            <a href={`/portfolio/${item.slug}/`} class="feat-cta">View case study <span class="arr">→</span></a>
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <div class="port-allhd">
+      <h2>All work</h2>
+      <span class="port-count">{portfolio.length} engagements</span>
     </div>
 
     <div class="port-mosaic">
@@ -46,6 +107,12 @@ portfolio.forEach((item, i) => {
               <div class="port-body">
                 <div class="cl">{item.data.client}</div>
                 <h2>{item.data.title}</h2>
+                {metrics[item.slug] && (
+                  <div class="port-metric">
+                    <span class="port-metric-val">{metrics[item.slug].value}</span>
+                    <span class="port-metric-lab">{metrics[item.slug].label}</span>
+                  </div>
+                )}
                 <p>{item.data.description}</p>
                 {item.data.tags.length > 0 && (
                   <div class="tags">

@@ -1,19 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getVlogs } from '../../lib/vlogs';
 
-const vlogs = (await getCollection('vlogs'))
-  .sort((a, b) => b.data.episode - a.data.episode);
+const vlogs = await getVlogs();
 
 function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-}
-
-// Resolve a vlog thumbnail: explicit thumbnailUrl, else a YouTube still, else null.
-function vlogThumb(videoUrl: string, thumbnailUrl?: string): string | null {
-  if (thumbnailUrl) return thumbnailUrl;
-  const m = videoUrl.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})(?:[?&]|$)/);
-  return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
 }
 ---
 
@@ -28,24 +20,25 @@ function vlogThumb(videoUrl: string, thumbnailUrl?: string): string | null {
     </div>
 
     <div class="vlog-list">
-      {vlogs.map(vlog => {
-        const thumb = vlogThumb(vlog.data.videoUrl, vlog.data.thumbnailUrl);
-        return (
-          <a href={`/vlogs/${vlog.slug}/`} class="vbox">
-            <div class="vth">
-              {thumb && <img class="vth-img" src={thumb} alt="" loading="lazy" />}
-              <div class="play">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-              </div>
+      {vlogs.map(vlog => (
+        <a
+          href={vlog.href}
+          class="vbox"
+          {...(vlog.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >
+          <div class="vth">
+            {vlog.thumbnail && <img class="vth-img" src={vlog.thumbnail} alt="" loading="lazy" />}
+            <div class="play">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
             </div>
-            <div class="vb">
-              <div class="tag">Design Vlog</div>
-              <h4>{vlog.data.title}</h4>
-              <div class="vm">EPISODE {vlog.data.episode} · {fmtDate(vlog.data.date).toUpperCase()}</div>
-            </div>
-          </a>
-        );
-      })}
+          </div>
+          <div class="vb">
+            <div class="tag">Design Vlog</div>
+            <h4>{vlog.title}</h4>
+            <div class="vm">EPISODE {vlog.episode} · {fmtDate(vlog.date).toUpperCase()}</div>
+          </div>
+        </a>
+      ))}
     </div>
   </div>
 </BaseLayout>

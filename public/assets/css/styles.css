@@ -396,6 +396,28 @@ body:has(.page-hd) .page-bg,body:has(.content-header) .page-bg{display:block;pos
 .page-hd h1{font-family:var(--exp);font-weight:800;font-size:clamp(38px,5vw,76px);line-height:.92;letter-spacing:-.035em;text-transform:uppercase}
 .page-hd .lead{color:var(--muted);font-size:18px;font-weight:500;max-width:40ch;margin-top:20px}
 
+/* "Selected Work" header — full-bleed section that echoes the hero (collage +
+   scrim + dot grid over a dark base) but calmer: centered text, lighter tint so
+   the work reads through. The collage is built from the case-study thumbnails. */
+.page-hd--work{position:relative;isolation:isolate;overflow:hidden;background:#141414;color:var(--on-accent);padding:88px 0 68px}
+.page-hd--work::before{display:none} /* drop the light accent-tint band */
+.page-hd--work .page-hd-collage,
+.page-hd--work .page-hd-scrim{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.page-hd--work .page-hd-collage{display:flex;filter:grayscale(1) contrast(1.04) brightness(.82);opacity:.42}
+.page-hd--work .page-hd-collage img{flex:1 1 0;min-width:0;width:100%;height:100%;object-fit:cover;display:block}
+/* lighter scrim than the hero — a gentle vignette plus a bottom fade into the body */
+.page-hd--work .page-hd-scrim{background:
+  linear-gradient(0deg,#141414 1%,rgba(20,20,20,0) 58%),
+  radial-gradient(125% 130% at 50% 42%,rgba(18,18,18,.28),rgba(18,18,18,.62))}
+/* hero-style dot grid — same size + left-to-right mask fade as .hero-sec::after,
+   but a stronger dot alpha than --dots-light so it reads more clearly here (local
+   override keeps the hero's grid untouched). */
+.page-hd--work::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(rgba(253,253,252,.18) 1px,transparent 1.5px);background-size:26px 26px;-webkit-mask-image:linear-gradient(95deg,#000 0%,#000 36%,transparent 68%);mask-image:linear-gradient(95deg,#000 0%,#000 36%,transparent 68%)}
+/* Left-aligned, matching the Articles / Videos page headers. */
+.page-hd--work .page-hd-inner{position:relative;z-index:1}
+.page-hd--work h1{color:#FDFDFC}
+.page-hd--work .lead{color:rgba(253,253,252,.82)}
+
 /* article listing */
 .article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;padding:0 0 108px}
 .art-card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:transform .22s,box-shadow .22s,border-color .22s;text-decoration:none;color:inherit}

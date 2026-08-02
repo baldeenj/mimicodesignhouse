@@ -51,18 +51,28 @@ const featured = featuredSlugs
   .map((s) => portfolio.find((p) => p.slug === s))
   .filter((p): p is (typeof portfolio)[number] => Boolean(p))
   .map((item) => ({ item, thumb: cardThumb(item), metric: metrics[item.slug] }));
+
+// Collage of case-study thumbnails for the header background (deduped, non-null).
+// Capped so the slices stay legible behind the scrim.
+const collage = [...new Set(portfolio.map(cardThumb).filter((s): s is string => Boolean(s)))].slice(0, 8);
 ---
 
 <BaseLayout
   title="Portfolio — Mimico Design House"
   description="Selected work from Mimico Design House — UX engagements across Canada's largest enterprises and public institutions."
 >
-  <div class="wrap">
-    <div class="page-hd">
+  <section class="page-hd page-hd--work">
+    <div class="page-hd-collage" aria-hidden="true">
+      {collage.map((src) => <img src={src} alt="" loading="lazy" decoding="async" />)}
+    </div>
+    <div class="page-hd-scrim" aria-hidden="true"></div>
+    <div class="wrap page-hd-inner">
       <h1>Selected Work</h1>
       <p class="lead">Engagements across fintech, govtech, and enterprise SaaS — where the stakes are real and the margin for error is low.</p>
     </div>
+  </section>
 
+  <div class="wrap">
     <div class="feat-showcase">
       {featured.map(({ item, thumb, metric }, i) => (
         <section class="feat">

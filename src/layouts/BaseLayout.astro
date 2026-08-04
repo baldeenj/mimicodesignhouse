@@ -37,13 +37,19 @@ const {
 <header>
   <div class="wrap nav">
     <a href="/" class="brand"><img class="brand-mark" src="/assets/img/mdh-mark.png" alt="" width="26" height="32" />Mimico Design House</a>
-    <nav class="navlinks">
+    <nav class="navlinks" id="navlinks">
       <a href="/#services">Services</a>
       <a href="/portfolio/">Work</a>
       <a href="/#process">Method</a>
       <a href="/articles/">Insights</a>
+      {/* Below the breakpoint the bar has no room for the CTA, so it rides at
+          the foot of the panel instead. Exactly one of the two is ever shown. */}
+      <a href="/#contact" class="btn btn-primary nav-cta-panel">Start a conversation <span class="arr">→</span></a>
     </nav>
-    <a href="/#contact" class="btn btn-primary">Start a conversation <span class="arr">→</span></a>
+    <a href="/#contact" class="btn btn-primary nav-cta-bar">Start a conversation <span class="arr">→</span></a>
+    <button type="button" class="navtoggle" aria-expanded="false" aria-controls="navlinks" aria-label="Menu">
+      <span class="navtoggle-box" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
   </div>
 </header>
 
@@ -157,6 +163,29 @@ const {
   bar.className = "scroll-prog";
   bar.setAttribute("aria-hidden", "true");
   document.body.appendChild(bar);
+
+  // mobile nav disclosure
+  var navToggle = document.querySelector(".navtoggle");
+  var navPanel = document.getElementById("navlinks");
+  if (navToggle && navPanel) {
+    var navOpen = function () { return navToggle.getAttribute("aria-expanded") === "true"; };
+    var setNav = function (open) {
+      navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      navPanel.classList.toggle("is-open", open);
+    };
+    navToggle.addEventListener("click", function () { setNav(!navOpen()); });
+    // following a link, Escape, a click outside, or growing past the breakpoint all close it
+    navPanel.addEventListener("click", function (e) { if (e.target.closest("a")) setNav(false); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && navOpen()) { setNav(false); navToggle.focus(); }
+    });
+    document.addEventListener("click", function (e) {
+      if (navOpen() && !navPanel.contains(e.target) && !navToggle.contains(e.target)) setNav(false);
+    });
+    var mWide = window.matchMedia("(min-width:901px)");
+    var onWide = function () { if (mWide.matches) setNav(false); };
+    mWide.addEventListener ? mWide.addEventListener("change", onWide) : mWide.addListener(onWide);
+  }
 
   // parallax targets
   var heroBg = document.querySelector(".hero-bg");

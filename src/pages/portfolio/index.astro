@@ -12,17 +12,10 @@ function cardThumb(item: (typeof portfolio)[number]): string | null {
   return m ? m[1] : null;
 }
 
-// Split into 3 contiguous columns for a staggered masonry wall. Contiguous
-// chunks (not round-robin) keep the reading order intact when the columns
-// collapse to one/two on smaller screens. Varied thumbnail aspect ratios give
-// the layout an intentional, non-uniform rhythm.
+// Varied thumbnail aspect ratios give the scattered canvas a non-uniform
+// rhythm; they also drive the row pitch when the canvas lays itself out.
 const AR = ['ar-wide', 'ar-tall', 'ar-mid', 'ar-mid', 'ar-wide', 'ar-tall', 'ar-wide'];
-const chunk = Math.ceil(portfolio.length / 3);
-const columns: { item: (typeof portfolio)[number]; ar: string; thumb: string | null }[][] = [[], [], []];
-portfolio.forEach((item, i) => {
-  const ci = Math.min(Math.floor(i / chunk), 2);
-  columns[ci].push({ item, ar: AR[i % AR.length], thumb: cardThumb(item) });
-});
+const items = portfolio.map((item, i) => ({ item, ar: AR[i % AR.length], thumb: cardThumb(item) }));
 
 // Curated trio for the sticky featured showcase at the top (aviation/data,
 // fintech, public sector — showing range). Edit slugs to re-feature.
@@ -105,106 +98,345 @@ const collage = [...new Set(portfolio.map(cardThumb).filter((s): s is string => 
       <h2>All work</h2>
       <span class="port-count">{portfolio.length} engagements</span>
     </div>
-
-    <div class="port-mosaic">
-      {columns.map((col) => (
-        <div class="pcol">
-          {col.map(({ item, ar, thumb }) => (
-            <a href={`/portfolio/${item.slug}/`} class="port-card">
-              <div class={`port-thumb ${ar}`}>
-                {thumb && <img src={thumb} alt="" loading="lazy" decoding="async" />}
-              </div>
-              <div class="port-body">
-                <div class="cl">{item.data.client}</div>
-                <h2>{item.data.title}</h2>
-                {metrics[item.slug] && (
-                  <div class="port-metric">
-                    <span class="port-metric-val">{metrics[item.slug].value}</span>
-                    <span class="port-metric-lab">{metrics[item.slug].label}</span>
-                  </div>
-                )}
-                <p>{item.data.description}</p>
-                {item.data.tags.length > 0 && (
-                  <div class="tags">
-                    {item.data.tags.map(tag => <span class="tg">{tag}</span>)}
-                  </div>
-                )}
-              </div>
-            </a>
-          ))}
-        </div>
-      ))}
-    </div>
   </div>
+
+  <!--
+    Scattered work canvas. Ships as a plain responsive grid; the script upgrades
+    it in place to a pinned, drag-pannable canvas on pointer-capable widescreens.
+    Reduced motion, narrow viewports and no-JS all keep the grid.
+  -->
+  <section class="wcanvas" id="wcanvas">
+    <div class="wcanvas-rail">
+      <div class="wcanvas-stage">
+        <div class="wcanvas-view">
+          <div class="wcanvas-plane">
+            {items.map(({ item, ar, thumb }) => (
+              <a href={`/portfolio/${item.slug}/`} class="witem" data-ar={ar}>
+                <div class="witem-thumb">
+                  {thumb && <img src={thumb} alt="" loading="lazy" decoding="async" />}
+                </div>
+                <div class="witem-cap">
+                  <div class="cl">{item.data.client}</div>
+                  <h2>{item.data.title}</h2>
+                  {metrics[item.slug] && (
+                    <div class="port-metric">
+                      <span class="port-metric-val">{metrics[item.slug].value}</span>
+                      <span class="port-metric-lab">{metrics[item.slug].label}</span>
+                    </div>
+                  )}
+                  <p class="witem-desc">{item.data.description}</p>
+                  {item.data.tags.length > 0 && (
+                    <div class="tags">
+                      {item.data.tags.map(tag => <span class="tg">{tag}</span>)}
+                    </div>
+                  )}
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+        <div class="wcanvas-hint" aria-hidden="true">
+          <span class="wcanvas-hint-ic">✥</span> Drag to explore · Click to open a case study
+        </div>
+      </div>
+    </div>
+  </section>
 
   <script is:inline>
     (function () {
-      var mosaic = document.querySelector(".port-mosaic");
-      if (!mosaic) return;
-      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var cards = [].slice.call(mosaic.querySelectorAll(".port-card"));
-      // Reduced-motion (or no rAF): leave cards static via --fx:none.
-      if (reduce || !("requestAnimationFrame" in window)) return;
-      mosaic.classList.add("fx-on");
+      "use strict";
+      var root = document.getElementById("wcanvas");
+      if (!root || !("requestAnimationFrame" in window) || !window.PointerEvent) return;
 
-      // Deterministic pseudo-random per card: each flies out from the screen's
-      // bottom-right corner with its own tilt, jitter and stagger, so they stream
-      // in at different rates and settle into the grid.
+      var rail = root.querySelector(".wcanvas-rail");
+      var stage = root.querySelector(".wcanvas-stage");
+      var plane = root.querySelector(".wcanvas-plane");
+      var tiles = [].slice.call(plane.querySelectorAll(".witem"));
+      if (!tiles.length) return;
+
+      // The canvas is an enhancement: it only turns on for reduced-motion-free,
+      // reasonably wide viewports. Everything else keeps the plain grid.
+      var mReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var mNarrow = window.matchMedia("(max-width: 900px)");
+
+      var REPEL = 250;   // px radius in which neighbours part around the cursor
+      var PUSH = 34;     // px a neighbour is pushed at point-blank range
+      var LERP = 0.12;   // smoothing per frame for pointer-driven motion
+
+      // Packing density. FILL is how much of its cell a tile occupies and
+      // ROW_PITCH how far apart rows sit as a multiple of the average tile
+      // height — between them they set how tightly the field crowds. The jitter
+      // and brick offsets break up the underlying grid; keep them well under
+      // the slack left by FILL or tiles start colliding rather than crowding.
+      var FILL = 0.86;
+      var ROW_PITCH = 1.08;
+      var PAD_X = 0.03;  // plane edge gutter, as a fraction of plane width
+      var JIT_X = 0.10, JIT_Y = 0.10, BRICK = 0.10;
+
+      var on = false, raf = 0, visible = false;
+      var stageW = 0, stageH = 0, planeW = 0, planeH = 0, travelX = 0, travelY = 0, railTop = 0;
+      var dragX = 0, dragY = 0;                 // user pan offset on top of scroll
+      var offX = 0, offY = 0;                   // current plane translation
+      var ptrX = -1e5, ptrY = -1e5, hot = null; // cursor in plane space + hovered tile
+
       function rand(s) { var x = Math.sin(s) * 43758.5453; return x - Math.floor(x); }
-      cards.forEach(function (c, i) {
-        var r1 = rand(i * 12.9 + 1.3), r2 = rand(i * 7.7 + 4.1), r3 = rand(i * 3.3 + 9.2), r4 = rand(i * 5.1 + 2.2);
-        c._rot = (r3 - 0.5) * 42;               // dramatic random tilt
-        c._phase = r4 * 0.20;                   // random stagger in the reveal window
-        c._jx = (r1 - 0.5) * 160;               // small spread around the corner point
-        c._jy = (r2 - 0.5) * 120;
-        c._top = 0; c._left = 0;
-      });
+      function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
 
-      function easeOut(t) { return 1 - Math.pow(1 - t, 3.2); }
+      // ---- layout ---------------------------------------------------------
+      // Tiles sit on a jittered brick grid: enough structure to stay readable
+      // top-to-bottom, enough randomness to read as scattered rather than tiled.
+      function layout() {
+        stageW = stage.clientWidth;
+        stageH = stage.clientHeight;
+        var cols = stageW < 760 ? 2 : stageW < 1180 ? 3 : 4;
+        planeW = stageW * 1.22;                 // wider than the stage, so panning has somewhere to go
+        var padX = planeW * PAD_X;              // edge gutter, so jitter never has to be clamped away
+        var cellW = (planeW - padX * 2) / cols;
+        var tileW = Math.round(cellW * FILL);
 
-      function apply() {
-        var vw = document.documentElement.clientWidth;
-        var vh = window.innerHeight;
-        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
-        var cornerX = vw + 80, cornerY = vh + 80; // just past the bottom-right corner
-        var start = vh * 1.18, end = vh * 0.16;   // wide window so the long corner→slot travel reads
-        for (var k = 0; k < cards.length; k++) {
-          var c = cards[k];
-          var restX = c._left, restY = c._top - y; // untransformed viewport position
-          var t = (start - restY) / (start - end) - c._phase;
-          t = t < 0 ? 0 : t > 1 ? 1 : t;
-          var e = easeOut(t), inv = 1 - e;
-          // Vector from the card's resting slot to the corner; at inv=1 it sits at the corner.
-          var tx = inv * (cornerX + c._jx - restX);
-          var ty = inv * (cornerY + c._jy - restY);
-          c.style.setProperty("--fx",
-            "translate3d(" + tx.toFixed(1) + "px," + ty.toFixed(1) + "px,0) rotate(" +
-            (inv * c._rot).toFixed(2) + "deg) scale(" + (0.28 + 0.72 * e).toFixed(3) + ")");
-          c.style.opacity = (t * 1.35 > 1 ? 1 : t * 1.35).toFixed(2);
-        }
-      }
-
-      // Measure each card's untransformed document position (reset --fx first so
-      // transforms don't feed back into the measurement).
-      function measure() {
-        cards.forEach(function (c) { c.style.setProperty("--fx", "none"); });
-        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
-        cards.forEach(function (c) {
-          var r = c.getBoundingClientRect();
-          c._top = r.top + y;
-          c._left = r.left;
+        // Write all widths first, then read all heights, to avoid layout thrash.
+        tiles.forEach(function (el) { el.style.width = tileW + "px"; });
+        var maxH = 0, sumH = 0;
+        tiles.forEach(function (el) {
+          el._w = tileW; el._h = el.offsetHeight;
+          sumH += el._h; if (el._h > maxH) maxH = el._h;
         });
-        apply();
+
+        // Pitch off the *average* tile, not the tallest: taller tiles then tuck
+        // behind their neighbours, which is what makes the field read as
+        // scattered rather than as a grid with generous gutters.
+        var cellH = (sumH / tiles.length) * ROW_PITCH;
+        var padY = maxH / 2 + cellH * 0.14;     // room for the first/last row's jitter and bob
+        var rows = Math.ceil(tiles.length / cols);
+        planeH = padY * 2 + (rows - 1) * cellH;
+        plane.style.width = planeW + "px";
+        plane.style.height = planeH + "px";
+
+        tiles.forEach(function (el, i) {
+          var col = i % cols, row = Math.floor(i / cols);
+          var brick = (row % 2 ? BRICK : -BRICK) * cellW;  // nudge alternate rows apart
+          var cx = padX + (col + 0.5) * cellW + brick + (rand(i * 12.9 + 1.3) - 0.5) * cellW * JIT_X;
+          var cy = padY + row * cellH + (rand(i * 7.7 + 4.1) - 0.5) * cellH * JIT_Y;
+          el._x = clamp(cx - el._w / 2, 12, planeW - el._w - 12);
+          el._y = cy - el._h / 2;
+          el.style.left = el._x + "px";
+          el.style.top = el._y + "px";
+          // Earlier tiles stack on top, so where the field crowds it is a lower
+          // tile's thumbnail top that gets tucked under, never an upper tile's
+          // caption — the client, title and metric you actually pick from.
+          el.style.zIndex = String(tiles.length - i);
+          el._rot = (rand(i * 3.3 + 9.2) - 0.5) * 3.6;        // resting tilt
+          el._amp = 5 + rand(i * 5.1 + 2.2) * 9;              // idle bob height
+          el._spd = 0.34 + rand(i * 2.7 + 6.4) * 0.34;        // idle bob speed
+          el._ph = rand(i * 8.1 + 3.7) * Math.PI * 2;         // idle bob phase
+          if (el._dx === undefined) { el._dx = 0; el._dy = 0; el._sc = 1; }
+          // seed the hit box from the resting slot until the first frame paints
+          el._hx = el._x; el._hy = el._y; el._hw = el._w; el._hh = el._h;
+        });
+
+        travelX = Math.max(0, planeW - stageW);
+        travelY = Math.max(0, planeH - stageH);
+        rail.style.height = (stageH + travelY) + "px";
+        railTop = rail.getBoundingClientRect().top + (window.pageYOffset || 0);
+        dragX = clamp(dragX, -travelX / 2, travelX / 2);
       }
 
-      var ticking = false;
-      function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; apply(); }); } }
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", measure, { passive: true });
-      window.addEventListener("load", measure);
-      measure();
-      setTimeout(measure, 400);
-      setTimeout(measure, 1200); // re-measure after lazy images shift layout
+      // ---- frame ----------------------------------------------------------
+      function frame(ts) {
+        raf = 0;
+        var t = ts / 1000;
+        var scrolled = (window.pageYOffset || document.documentElement.scrollTop || 0) - railTop;
+        var baseY = -clamp(scrolled, 0, travelY);
+
+        // Drag rides on top of the scroll position, clamped to the plane bounds.
+        offY = clamp(baseY + dragY, -travelY, 0);
+        dragY = offY - baseY;
+        offX = clamp(-travelX / 2 + dragX, -travelX, 0);
+        plane.style.transform = "translate3d(" + offX.toFixed(1) + "px," + offY.toFixed(1) + "px,0)";
+
+        var px = ptrX - offX, py = ptrY - offY;   // cursor in plane space
+        for (var i = 0; i < tiles.length; i++) {
+          var el = tiles[i];
+          var cx = el._x + el._w / 2, cy = el._y + el._h / 2;
+          var vx = cx - px, vy = cy - py;
+          var d = Math.sqrt(vx * vx + vy * vy) || 1;
+          var tdx = 0, tdy = 0, tsc = 1;
+          if (el === hot) {
+            tsc = 1.06;                            // the tile under the cursor comes forward
+            tdy = -8;
+          } else if (d < REPEL) {
+            var f = (1 - d / REPEL) * PUSH;        // neighbours part around it
+            tdx = (vx / d) * f;
+            tdy = (vy / d) * f;
+          }
+          el._dx += (tdx - el._dx) * LERP;
+          el._dy += (tdy - el._dy) * LERP;
+          el._sc += (tsc - el._sc) * LERP;
+          var bob = Math.sin(t * el._spd + el._ph) * el._amp;
+          var sway = Math.cos(t * el._spd * 0.7 + el._ph) * el._amp * 0.35;
+          el.style.transform =
+            "translate3d(" + (el._dx + sway).toFixed(2) + "px," + (el._dy + bob).toFixed(2) + "px,0) rotate(" +
+            (el._rot + Math.sin(t * el._spd * 0.5 + el._ph) * 0.6).toFixed(2) + "deg) scale(" + el._sc.toFixed(3) + ")";
+          // Remember where this frame actually painted the tile, so hit-testing
+          // matches what the eye sees. Hit-testing the resting slot instead
+          // would let the highlight and the click land on different tiles once
+          // the field is crowded. Rotation is under 2°, so it is ignored.
+          var grow = (el._sc - 1) / 2;
+          el._hx = el._x + el._dx + sway - el._w * grow;
+          el._hy = el._y + el._dy + bob - el._h * grow;
+          el._hw = el._w * el._sc;
+          el._hh = el._h * el._sc;
+        }
+        if (visible && on) raf = requestAnimationFrame(frame);
+      }
+      function kick() { if (on && visible && !raf) raf = requestAnimationFrame(frame); }
+
+      // ---- pointer --------------------------------------------------------
+      // Front-to-back, matching the stacking order set in layout(): the earliest
+      // tile covering the point is the one actually visible under the cursor.
+      function topmostAt(px, py) {
+        for (var i = 0; i < tiles.length; i++) {
+          var el = tiles[i];
+          if (px >= el._hx && px <= el._hx + el._hw && py >= el._hy && py <= el._hy + el._hh) return el;
+        }
+        return null;
+      }
+      function setHot(el) {
+        if (hot === el) return;
+        if (hot) hot.classList.remove("is-hot");
+        hot = el;
+        if (hot) hot.classList.add("is-hot");
+      }
+
+      var DRAG_SLOP = 6;   // px of movement before a press counts as a drag
+      var dragging = false, captured = false, startX = 0, startY = 0, baseDX = 0, baseDY = 0, moved = 0;
+
+      function onMove(e) {
+        var r = stage.getBoundingClientRect();
+        ptrX = e.clientX - r.left;
+        ptrY = e.clientY - r.top;
+        if (dragging) {
+          moved = Math.max(moved, Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY));
+          // Capture only once the press has clearly become a drag. Capturing on
+          // pointerdown would retarget the click to the stage and stop a plain
+          // click from ever reaching the tile's link.
+          if (!captured && moved > DRAG_SLOP) {
+            captured = true;
+            root.classList.add("hint-off");
+            try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+          }
+          if (!captured) return;
+          dragX = clamp(baseDX + (e.clientX - startX), -travelX / 2, travelX / 2);
+          dragY = baseDY + (e.clientY - startY);
+          setHot(null);
+        } else {
+          setHot(topmostAt(ptrX - offX, ptrY - offY));
+        }
+        kick();
+      }
+      function onDown(e) {
+        if (e.button !== 0) return;
+        dragging = true; captured = false; moved = 0;
+        startX = e.clientX; startY = e.clientY;
+        baseDX = dragX; baseDY = dragY;
+        stage.classList.add("is-dragging");
+      }
+      function onUp(e) {
+        if (!dragging) return;
+        dragging = false;
+        stage.classList.remove("is-dragging");
+        if (captured) { try { stage.releasePointerCapture(e.pointerId); } catch (err) {} }
+        // A drag must not also open the case study it started on.
+        if (moved > DRAG_SLOP) stage.addEventListener("click", swallow, { capture: true, once: true });
+        captured = false;
+        onMove(e);
+      }
+      function swallow(e) { e.preventDefault(); e.stopPropagation(); }
+      function onLeave() { ptrX = ptrY = -1e5; setHot(null); kick(); }
+
+      // Keyboard tabbing: bring the focused tile to the middle of the stage,
+      // since the stage clips and the browser can't scroll it into view itself.
+      function onFocus(e) {
+        var el = e.target.closest(".witem");
+        if (!el || !on) return;
+        var wantY = clamp(-(el._y + el._h / 2 - stageH / 2), -travelY, 0);
+        dragY = 0;
+        window.scrollTo({ top: railTop - wantY, behavior: "auto" });
+        dragX = clamp(-(el._x + el._w / 2 - stageW / 2) + travelX / 2, -travelX / 2, travelX / 2);
+        kick();
+      }
+
+      // ---- enable / disable ------------------------------------------------
+      // Tiles move by transform inside a clipped stage, so the browser only
+      // starts a lazy thumbnail once it is already on screen and it visibly
+      // pops in. Warm the whole field the first time the stage comes into
+      // range instead — 17 thumbnails, fetched just before they are wanted.
+      var warmed = false;
+      function warmImages() {
+        if (warmed) return;
+        warmed = true;
+        tiles.forEach(function (el) {
+          var im = el.querySelector("img");
+          if (im && im.loading === "lazy") im.loading = "eager";
+        });
+      }
+
+      var io = "IntersectionObserver" in window
+        ? new IntersectionObserver(function (es) {
+            visible = es[0].isIntersecting;
+            if (visible) warmImages();
+            kick();
+          }, { rootMargin: "120px" })
+        : null;
+
+      function enable() {
+        if (on) return;
+        on = true;
+        root.classList.add("canvas-on");
+        layout();
+        stage.addEventListener("pointermove", onMove);
+        stage.addEventListener("pointerdown", onDown);
+        stage.addEventListener("pointerup", onUp);
+        stage.addEventListener("pointercancel", onUp);
+        stage.addEventListener("pointerleave", onLeave);
+        plane.addEventListener("focusin", onFocus);
+        visible = true;            // optimistic; the observer corrects it on first callback
+        if (io) io.observe(stage);
+        kick();
+      }
+      function disable() {
+        if (!on) return;
+        on = false;
+        root.classList.remove("canvas-on");
+        stage.removeEventListener("pointermove", onMove);
+        stage.removeEventListener("pointerdown", onDown);
+        stage.removeEventListener("pointerup", onUp);
+        stage.removeEventListener("pointercancel", onUp);
+        stage.removeEventListener("pointerleave", onLeave);
+        plane.removeEventListener("focusin", onFocus);
+        if (io) io.unobserve(stage);
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        setHot(null);
+        rail.style.height = plane.style.width = plane.style.height = plane.style.transform = "";
+        tiles.forEach(function (el) { el.style.cssText = ""; });
+      }
+      function sync() {
+        if (mReduce.matches || mNarrow.matches) disable(); else enable();
+      }
+
+      var resizeT = 0;
+      window.addEventListener("resize", function () {
+        clearTimeout(resizeT);
+        resizeT = setTimeout(function () { if (on) { layout(); kick(); } }, 150);
+      }, { passive: true });
+      window.addEventListener("scroll", kick, { passive: true });
+
+      (mReduce.addEventListener ? mReduce.addEventListener("change", sync) : mReduce.addListener(sync));
+      (mNarrow.addEventListener ? mNarrow.addEventListener("change", sync) : mNarrow.addListener(sync));
+      sync();
+      // Lazy thumbnails change tile heights after first paint — re-measure once settled.
+      window.addEventListener("load", function () { if (on) { layout(); kick(); } });
+      setTimeout(function () { if (on) { layout(); kick(); } }, 900);
     })();
   </script>
 </BaseLayout>

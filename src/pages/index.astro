@@ -11,9 +11,61 @@ const latestVlogs = (await getVlogs()).slice(0, 4);
 
 const portfolioItems = (await getCollection('portfolio'))
   .filter(p => p.data.featured);
-// one tile per client for the "Trusted at scale" grid (dedupe RBC, Air Canada, etc.)
-const clients = [...new Map(portfolioItems.map(p => [p.data.client, p])).values()]
-  .sort((a, b) => a.data.client.localeCompare(b.data.client));
+
+// "Trusted at scale" roster — one row per client, aggregating every case study
+// for that client. Sector and headline metric are curated here because the
+// content schema carries neither.
+const SECTOR: Record<string, string> = {
+  'RBC': 'Banking', 'TD': 'Banking', 'CIBC': 'Banking',
+  'Air Canada': 'Aviation', 'CAE': 'Aviation',
+  'Canada Post': 'Public sector', 'Gov. of Ontario': 'Public sector',
+  'Milk.org': 'Agri-food',
+};
+// Headline result per client, taken from the Outcomes section of its case
+// studies. CAE and Milk.org report qualitative outcomes only, so they carry a
+// claim with no number and render without the oversized figure.
+const CLIENT_METRIC: Record<string, { value?: string; label: string }> = {
+  'RBC': { value: '40%', label: 'faster credential resets' },
+  'TD': { value: '25%', label: 'faster trade execution' },
+  'CIBC': { value: '35%', label: 'faster account selection' },
+  'Air Canada': { value: '40%', label: 'faster forecast reviews' },
+  'Canada Post': { value: '30%+', label: 'faster parcel tracking' },
+  'Gov. of Ontario': { value: '45%', label: 'less time on task' },
+  'CAE': { label: 'Higher simulator utilization, fewer cancellations' },
+  'Milk.org': { label: 'Accessible IA rebuild for a national brand' },
+};
+
+// Thumbnail: explicit imageUrl, else the first figure image in the case study body.
+function caseThumb(item: (typeof portfolioItems)[number]): string | null {
+  if (item.data.imageUrl) return item.data.imageUrl;
+  const m = item.body.match(/<img[^>]+src="([^"]+)"/);
+  return m ? m[1] : null;
+}
+
+const byClient = new Map<string, typeof portfolioItems>();
+for (const item of portfolioItems) {
+  const list = byClient.get(item.data.client);
+  if (list) list.push(item);
+  else byClient.set(item.data.client, [item]);
+}
+
+const roster = [...byClient.entries()]
+  .map(([client, items]) => {
+    // The flagship study is the one with the shortest slug ("rbc" over "rbc-fx").
+    const flagship = items.reduce((a, b) => (b.slug.length < a.slug.length ? b : a));
+    return {
+      client,
+      slug: flagship.slug,
+      sector: SECTOR[client] ?? 'Enterprise',
+      count: items.length,
+      metric: CLIENT_METRIC[client] ?? { label: flagship.data.tags[0] ?? '' },
+      thumbs: items.map(caseThumb).filter((s): s is string => Boolean(s)),
+    };
+  })
+  // Deepest engagements lead; alphabetical within an equal count.
+  .sort((a, b) => b.count - a.count || a.client.localeCompare(b.client));
+
+const sectorCount = new Set(roster.map(r => r.sector)).size;
 
 function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
@@ -248,16 +300,127 @@ const method = [
       <h2>Trusted at scale</h2>
       <p class="lead">50+ teams across Canada's largest enterprises and public institutions — where compliance and scale leave no margin for guesswork.</p>
     </div>
-    <div class="cli reveal">
-      {clients.map(item => (
-        <a href={`/portfolio/${item.slug}/`} class="c">
-          <div class="nm">{item.data.client}</div>
-        </a>
-      ))}
+  </div>
+
+  <div class="roster reveal" id="roster">
+    {roster.map((r, i) => (
+      <a href={`/portfolio/${r.slug}/`} class="rrow">
+        <span class="rrow-fill" aria-hidden="true"></span>
+        <span class="rrow-in">
+          <span class="rrow-no">{String(i + 1).padStart(2, '0')}</span>
+          <span class="rrow-name">{r.client}</span>
+          <span class="rrow-meta">
+            <span>{r.sector}</span>
+            <span>{r.count} case {r.count === 1 ? 'study' : 'studies'}</span>
+          </span>
+          <span class={`rrow-metric${r.metric.value ? '' : ' is-qual'}`}>
+            {r.metric.value && <b>{r.metric.value}</b>}{r.metric.label}
+          </span>
+          <span class="rrow-arr" aria-hidden="true">→</span>
+          <span class="rrow-thumbs" aria-hidden="true">
+            {r.thumbs.slice(0, 4).map(src => <img src={src} alt="" loading="lazy" decoding="async" />)}
+          </span>
+        </span>
+      </a>
+    ))}
+  </div>
+
+  <div class="wrap">
+    <div class="roster-ledger reveal">
+      <div><span class="lv">{roster.length}</span><span class="ll">Enterprises<br />&amp; institutions</span></div>
+      <div><span class="lv">{portfolioItems.length}</span><span class="ll">Case studies<br />published</span></div>
+      <div><span class="lv">{sectorCount}</span><span class="ll">Regulated<br />sectors</span></div>
+      <div class="ledger-cta"><a href="/portfolio/" class="btn btn-line">View the portfolio <span class="arr">→</span></a></div>
     </div>
-    <div style="margin-top:30px"><a href="/portfolio/" class="btn btn-line">View the portfolio <span class="arr">→</span></a></div>
   </div>
 </section>
+
+<!-- cursor-following case-study preview for the roster (desktop pointers only) -->
+<div class="rpeek" id="rpeek" aria-hidden="true"></div>
+
+<script is:inline>
+(function () {
+  "use strict";
+  const roster = document.getElementById("roster");
+  const peek = document.getElementById("rpeek");
+  if (!roster || !peek) return;
+  const fine = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+  const reduce = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  if (!fine || reduce) return;
+
+  let tx = 0, ty = 0, x = 0, y = 0, rot = 0;
+  let raf = 0, cycle = 0, active = null, layers = [], idx = 0, hw = 0, hh = 0;
+
+  // Warm the thumbnails once, so the first hover never shows an empty frame.
+  let warmed = false;
+  function warm() {
+    if (warmed) return;
+    warmed = true;
+    roster.querySelectorAll(".rrow-thumbs img").forEach(function (im) { new Image().src = im.src; });
+  }
+
+  function loop() {
+    if (!active) { raf = 0; return; }
+    const dx = tx - x, dy = ty - y;
+    x += dx * 0.14;
+    y += dy * 0.14;
+    // Tilt with horizontal velocity — the stack swings as the cursor sweeps.
+    rot += (Math.max(-9, Math.min(9, dx * 0.35)) - rot) * 0.1;
+    peek.style.transform = "translate3d(" + (x - hw) + "px," + (y - hh) + "px,0) rotate(" + rot.toFixed(2) + "deg)";
+    raf = requestAnimationFrame(loop);
+  }
+
+  function next() {
+    if (layers.length < 2) return;
+    layers[idx].classList.remove("on");
+    idx = (idx + 1) % layers.length;
+    layers[idx].classList.add("on");
+  }
+
+  function show(row) {
+    active = row;
+    const frag = document.createDocumentFragment();
+    layers = [];
+    row.querySelectorAll(".rrow-thumbs img").forEach(function (thumb, i) {
+      const im = new Image();
+      im.src = thumb.src;
+      im.alt = "";
+      im.decoding = "async";
+      if (i === 0) im.className = "on";
+      layers.push(im);
+      frag.appendChild(im);
+    });
+    peek.replaceChildren(frag);
+    idx = 0;
+    peek.classList.add("on");
+    hw = peek.offsetWidth / 2;
+    hh = peek.offsetHeight / 2;
+    clearInterval(cycle);
+    if (layers.length > 1) cycle = setInterval(next, 1100);
+    if (!raf) raf = requestAnimationFrame(loop);
+  }
+
+  function hide() {
+    active = null;
+    peek.classList.remove("on");
+    clearInterval(cycle);
+  }
+
+  roster.addEventListener("pointermove", function (e) { tx = e.clientX; ty = e.clientY; });
+  roster.addEventListener("pointerover", function (e) {
+    const row = e.target.closest(".rrow");
+    if (!row || row === active) return;
+    warm();
+    tx = e.clientX;
+    ty = e.clientY;
+    // Snap to the cursor on the way in so the stack never flies in from 0,0.
+    if (!active) { x = tx; y = ty; rot = 0; }
+    show(row);
+  });
+  roster.addEventListener("pointerleave", hide);
+  window.addEventListener("blur", hide);
+})();
+</script>
 
 <!-- PROCESS -->
 <section id="process" class="sec-angled">

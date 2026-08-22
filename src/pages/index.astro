@@ -71,9 +71,11 @@ function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
 
-// Cloudflare Turnstile site key (public). Set PUBLIC_TURNSTILE_SITE_KEY in your
-// environment for production; the fallback is Cloudflare's "always passes" test key.
-const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+// Cloudflare Turnstile site key for the "Mimico contact form" widget. This is a
+// public value — it ships in the page source — so it is the default rather than a
+// build-time env var, which silently fell back to a test key when unset.
+// PUBLIC_TURNSTILE_SITE_KEY still overrides it (e.g. a test key for local work).
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAAD3e3iIEJsJzxKQq';
 
 const services = [
   {
@@ -597,7 +599,7 @@ const method = [
       <!-- Honeypot: hidden from humans, catches naive bots -->
       <input type="text" name="website" class="cf-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark"></div>
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-action="turnstile-spin-v2" data-theme="dark"></div>
 
       <div class="cf-actions">
         <button type="submit" class="btn btn-primary">Send message <span class="arr">→</span></button>

@@ -27,7 +27,10 @@ export default {
     }
 
     // Tina admin SPA: serve the shell for client-side routes with no static asset.
+    // Real files (e.g. /admin/assets/*.js) must be served as-is, not as the shell.
     if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) {
+      const asset = await env.ASSETS.fetch(request);
+      if (asset.status !== 404) return asset;
       return env.ASSETS.fetch(new URL("/admin/index.html", url.origin));
     }
 

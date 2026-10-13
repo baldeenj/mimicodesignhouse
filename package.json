@@ -7,7 +7,7 @@
     "build": "tinacms build && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "set -a && . ./.env.tina && set +a && npm run build && npx wrangler deploy"
+    "deploy": "set -a && . ./.env.tina && set +a && { npm run build; s=$?; git checkout -- tina/__generated__; [ $s -eq 0 ]; } && npx wrangler deploy"
   },
   "dependencies": {
     "astro": "^4.16.0",

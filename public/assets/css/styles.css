@@ -148,8 +148,8 @@ section>.wrap,footer>.wrap{position:relative;z-index:2}
 #services::after,#work::after,#process::after,#insights::after,#vlogs::after{
   content:"";position:absolute;top:50%;transform:translateY(calc(-50% + var(--wm-y,0px)));will-change:transform;
   width:clamp(300px,40vw,540px);height:clamp(360px,50vw,660px);
-  -webkit-mask:url("/assets/img/mdh-mark.png") no-repeat center/contain;
-  mask:url("/assets/img/mdh-mark.png") no-repeat center/contain;
+  -webkit-mask:url("/assets/img/mdh-mark-outline.svg") no-repeat center/contain;
+  mask:url("/assets/img/mdh-mark-outline.svg") no-repeat center/contain;
   background:var(--accent);opacity:.08;z-index:0;pointer-events:none}
 #services::after,#process::after,#vlogs::after{right:clamp(-170px,-9vw,-50px)}
 #work::after,#insights::after{left:clamp(-170px,-9vw,-50px)}
@@ -489,7 +489,7 @@ footer{padding:72px 0 40px;background:var(--bg)}
 .page-bg{display:none}
 body:has(.page-hd) .page-bg,body:has(.content-header) .page-bg{display:block;position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
 .page-bg::before{content:"";position:absolute;inset:0;background:radial-gradient(48% 42% at 100% 22%,rgba(36,86,199,.10),transparent 62%),radial-gradient(46% 40% at -5% 96%,rgba(36,86,199,.08),transparent 60%)}
-.page-bg-mark{position:absolute;right:-10vw;top:46vh;width:min(58vw,680px);height:min(70vw,840px);will-change:transform;background:var(--accent);opacity:.05;-webkit-mask:url("/assets/img/mdh-mark.png") no-repeat center/contain;mask:url("/assets/img/mdh-mark.png") no-repeat center/contain}
+.page-bg-mark{position:absolute;right:-10vw;top:46vh;width:min(58vw,680px);height:min(70vw,840px);will-change:transform;background:var(--accent);opacity:.05;-webkit-mask:url("/assets/img/mdh-mark-outline.svg") no-repeat center/contain;mask:url("/assets/img/mdh-mark-outline.svg") no-repeat center/contain}
 @media(prefers-reduced-motion:reduce){.page-bg-mark{transform:none!important}}
 .page-hd h1{font-family:var(--exp);font-weight:800;font-size:clamp(38px,5vw,76px);line-height:.92;letter-spacing:-.035em;text-transform:uppercase}
 .page-hd .lead{color:var(--muted);font-size:18px;font-weight:500;max-width:40ch;margin-top:20px}

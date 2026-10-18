@@ -9,7 +9,9 @@
  *      published and sends nothing — so the back-catalogue is never blasted out.
  *   4. For each genuinely new item afterwards it sends a Resend Broadcast to the
  *      audience (which handles unsubscribe automatically), newest items capped
- *      per run to avoid floods.
+ *      per run to avoid floods. Unseen items older than MAX_AGE_DAYS are marked
+ *      seen without sending.
+ *   5. If either feed can't be read, the run is skipped and KV is left alone.
  *
  * Env: RESEND_API_KEY, RESEND_AUDIENCE_ID, NEWSLETTER_FROM (or CONTACT_FROM),
  *      SITE_URL, YOUTUBE_CHANNEL_ID, and the NEWSLETTER_KV namespace binding.
@@ -18,16 +20,19 @@
 const RESEND_BASE = "https://api.resend.com";
 const KV_KEY = "seen_v1";
 const MAX_PER_RUN = 3; // safety cap: never send more than this in a single run
+const MAX_AGE_DAYS = 14; // only email items published this recently; older unseen items are marked silently
 
 function esc(s) {
   return String(s || "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+// Both fetchers return null when the feed couldn't be read, so a failed fetch
+// is never mistaken for "no items" (which would corrupt the seen-set).
 async function fetchArticles(siteUrl) {
   try {
     const r = await fetch(`${siteUrl}/newsletter-feed.json`, { cf: { cacheTtl: 60 } });
-    if (!r.ok) return [];
+    if (!r.ok) { console.error("fetchArticles: HTTP", r.status); return null; }
     const data = await r.json();
     return (data.articles || []).map((a) => ({
       key: `a:${a.id}`,
@@ -41,7 +46,7 @@ async function fetchArticles(siteUrl) {
     }));
   } catch (e) {
     console.error("fetchArticles failed", e);
-    return [];
+    return null;
   }
 }
 
@@ -49,7 +54,7 @@ async function fetchVideos(channelId) {
   if (!channelId) return [];
   try {
     const r = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
-    if (!r.ok) return [];
+    if (!r.ok) { console.error("fetchVideos: HTTP", r.status); return null; }
     const xml = await r.text();
     const out = [];
     const entries = xml.split("<entry>").slice(1);
@@ -73,7 +78,7 @@ async function fetchVideos(channelId) {
     return out;
   } catch (e) {
     console.error("fetchVideos failed", e);
-    return [];
+    return null;
   }
 }
 
@@ -167,8 +172,14 @@ export async function runNewsletter(env) {
     fetchArticles(siteUrl),
     fetchVideos(env.YOUTUBE_CHANNEL_ID),
   ]);
+  // A partial read must not touch state: seeding from only one feed is what
+  // once caused the whole back-catalogue to be re-sent. The site always has
+  // articles, so an empty article feed is treated as a failed read too.
+  if (articles === null || videos === null || !articles.length) {
+    console.error("newsletter: feed unavailable, skipping run without changing state");
+    return;
+  }
   const items = articles.concat(videos);
-  if (!items.length) { console.log("newsletter: no items in feeds"); return; }
 
   const state = (await env.NEWSLETTER_KV.get(KV_KEY, "json")) || null;
 
@@ -181,11 +192,25 @@ export async function runNewsletter(env) {
   }
 
   const seen = new Set(state.ids || []);
-  const fresh = items
-    .filter((i) => !seen.has(i.key))
+  const unseen = items.filter((i) => !seen.has(i.key));
+  if (!unseen.length) { console.log("newsletter: nothing new"); return; }
+
+  // Anything unseen but older than MAX_AGE_DAYS is back-catalogue, not news:
+  // record it as handled without emailing.
+  const cutoff = Date.now() - MAX_AGE_DAYS * 86400000;
+  const isRecent = (i) => { const t = new Date(i.date).getTime(); return Number.isFinite(t) && t >= cutoff; };
+  const stale = unseen.filter((i) => !isRecent(i));
+  for (const item of stale) seen.add(item.key);
+
+  const fresh = unseen
+    .filter(isRecent)
     .sort((a, b) => new Date(a.date) - new Date(b.date)); // oldest new first
 
-  if (!fresh.length) { console.log("newsletter: nothing new"); return; }
+  if (!fresh.length) {
+    await env.NEWSLETTER_KV.put(KV_KEY, JSON.stringify({ seeded: true, ids: Array.from(seen), at: new Date().toISOString() }));
+    console.log(`newsletter: nothing new; marked ${stale.length} old item(s) as seen without sending`);
+    return;
+  }
 
   // Send up to MAX_PER_RUN this run; any leftover new items get picked up next run.
   const toSend = fresh.slice(0, MAX_PER_RUN);
@@ -198,5 +223,5 @@ export async function runNewsletter(env) {
   }
 
   await env.NEWSLETTER_KV.put(KV_KEY, JSON.stringify({ seeded: true, ids: Array.from(seen), at: new Date().toISOString() }));
-  console.log(`newsletter: sent ${sent} broadcast(s) of ${fresh.length} new item(s); ${fresh.length - toSend.length} deferred`);
+  console.log(`newsletter: sent ${sent} broadcast(s) of ${fresh.length} new item(s); ${fresh.length - toSend.length} deferred; ${stale.length} old item(s) skipped`);
 }

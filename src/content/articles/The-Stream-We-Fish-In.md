@@ -13,6 +13,14 @@ summary: |-
   That made me wonder: what does physics say about “now”? Would quantum mechanics and relativity have an explanation for time in the way Thoreau perceived it? This article is an exploration of why our experience of the present still remains something we have to live, moment by moment.
 ---
 
+“You must live in the present, launch yourself on every wave, find your eternity in each moment.” - Henry David Thoreau
+
+Thoreau spent two years, two months and two days at Walden Pond, turning a philosophy of presence into a daily practice: a morning swim, hours of quiet observation, working his bean field, listening closely to the woods. “Time is but the stream I go a-fishing in,” he said.
+
+There is a kind of freedom in realizing that the present is the only place we ever live and create. Even our memories of the past and our hopes for the future are experienced in the now.
+
+That made me wonder: what does physics say about “now”? Would quantum mechanics and relativity have an explanation for time in the way Thoreau perceived it? This article is an exploration of why our experience of the present still remains something we have to live, moment by moment.
+
 ## Introduction
 
 Recently, I have been contemplating how we only ever experience the present. Everything we remember that happened in our past was always a present moment. Whatever we will experience in the future will also be experienced in the present moment. This does not mean that every moment we experience is the same. It means that, wherever we are in our lives, we are always experiencing them here and now, not in the past or in the future.

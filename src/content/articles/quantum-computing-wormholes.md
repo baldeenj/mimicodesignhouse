@@ -1,6 +1,6 @@
 ---
 title: "Exploring Quantum Computing and Wormholes: A New Frontier"
-tag: Quantum Computing
+tag: src/content/categories/quantum-computing.json
 date: 2026-01-28
 heroImage: /uploads/hero-quantum-computing-wormholes.jpg
 summary: "As we continue to unlock the secrets of quantum gravity and teleportation, each discovery invites us to ponder just how much more there is to unveil."

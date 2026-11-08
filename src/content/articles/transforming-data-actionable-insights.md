@@ -1,6 +1,6 @@
 ---
 title: "Transforming Data into Actionable Insights through Design"
-tag: Design
+tag: src/content/categories/design.json
 date: 2025-10-31
 heroImage: /uploads/hero-transforming-data-actionable-insights.jpg
 ---

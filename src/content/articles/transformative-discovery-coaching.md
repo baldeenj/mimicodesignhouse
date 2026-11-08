@@ -1,6 +1,6 @@
 ---
 title: "Transformative Discovery: Integrating Coaching Principles for Project Success"
-tag: Design
+tag: src/content/categories/design.json
 date: 2025-12-29
 heroImage: /uploads/hero-transformative-discovery-coaching.jpg
 ---

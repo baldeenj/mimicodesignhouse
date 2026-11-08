@@ -1,6 +1,6 @@
 ---
 title: "Case Study: Designing an AI-Driven Product with Strategic Ownership"
-tag: Design
+tag: src/content/categories/design.json
 date: 2025-07-03
 heroImage: /uploads/hero-ai-driven-product-case-study.jpg
 ---

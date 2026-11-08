@@ -1,6 +1,6 @@
 ---
 title: "Quantum Computing: Revolutionizing Industry and Science"
-tag: Quantum Computing
+tag: src/content/categories/quantum-computing.json
 date: 2025-10-02
 heroImage: /uploads/hero-quantum-computing-revolutionizing-industry.jpg
 summary: "Quantum computing is moving from theoretical curiosity to genuine industrial application. Drug discovery, materials science, financial optimization, and cryptography are among the sectors closest to seeing real quantum advantage."

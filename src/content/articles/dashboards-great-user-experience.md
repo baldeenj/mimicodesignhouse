@@ -1,6 +1,6 @@
 ---
 title: "Dashboards Drive Great User Experience"
-tag: UX Research
+tag: src/content/categories/ux-research.json
 date: 2025-10-01
 heroImage: /uploads/hero-dashboards-great-user-experience.jpg
 summary: "Dashboards are among the most misunderstood artifacts in product design. When done right, they're decision engines. When done wrong, they're vanity galleries. The difference comes down to research, focus, and discipline."

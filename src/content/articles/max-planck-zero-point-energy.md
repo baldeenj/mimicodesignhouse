@@ -1,6 +1,6 @@
 ---
 title: "Quantum Revolution: How Max Planck Tapped Into the Universe's Zero-Point Mysteries"
-tag: Quantum Computing
+tag: src/content/categories/quantum-computing.json
 date: 2025-12-29
 heroImage: /uploads/hero-max-planck-zero-point-energy.jpg
 ---

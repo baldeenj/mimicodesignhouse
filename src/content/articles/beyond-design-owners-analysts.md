@@ -1,6 +1,6 @@
 ---
 title: "Beyond Design: Why Top Product Designers Think Like Owners and Analysts"
-tag: Design
+tag: src/content/categories/design.json
 date: 2025-05-28
 heroImage: /uploads/hero-beyond-design-owners-analysts.jpg
 ---

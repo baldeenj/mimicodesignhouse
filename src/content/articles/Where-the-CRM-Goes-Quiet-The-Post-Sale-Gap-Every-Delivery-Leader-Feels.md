@@ -1,6 +1,6 @@
 ---
 title: 'Where the CRM Goes Quiet: The Post-Sale Gap Every Delivery Leader Feels'
-tag: Design
+tag: src/content/categories/design.json
 date: 2026-07-14T00:00:00.000Z
 heroImage: /uploads/hero-2b.png
 summary: >+

@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { categoryNames } from '../../lib/categories';
 
+const catNames = await categoryNames();
 const articles = (await getCollection('articles'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
@@ -29,7 +31,7 @@ function fmtDate(d: Date): string {
             )}
           </div>
           <div class="art-body">
-            <div class="tag">{article.data.tag}</div>
+            <div class="tag">{catNames.get(article.data.tag.id)}</div>
             <h2>{article.data.title}</h2>
             {article.data.summary && <p>{article.data.summary}</p>}
             <div class="art-foot">

@@ -1,6 +1,6 @@
 ---
 title: What Crosses the Event Horizon
-tag: Design
+tag: src/content/categories/design.json
 date: 2026-10-13T00:00:00.000Z
 heroImage: /uploads/event-horizon-hero.png
 summary: |-

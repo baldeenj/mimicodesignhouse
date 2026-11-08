@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { categoryNames } from '../../lib/categories';
 
 export async function getStaticPaths() {
   const articles = await getCollection('articles');
@@ -11,6 +12,7 @@ export async function getStaticPaths() {
 }
 
 const { article } = Astro.props;
+const catNames = await categoryNames();
 const { Content } = await article.render();
 
 function fmtDate(d: Date): string {
@@ -30,7 +32,7 @@ function fmtDate(d: Date): string {
   <div class="wrap">
     <a href="/articles/" class="back-link">All articles</a>
     <div class="content-header">
-      <div class="tag">{article.data.tag}</div>
+      <div class="tag">{catNames.get(article.data.tag.id)}</div>
       <h1>{article.data.title}</h1>
       <div class="meta">{fmtDate(article.data.date)}</div>
     </div>

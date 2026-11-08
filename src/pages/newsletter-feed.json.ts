@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { categoryNames } from '../lib/categories';
 
 // Lightweight machine-readable feed of published articles, consumed by the
 // scheduled newsletter Worker (worker/newsletter.js) to detect new posts.
 // Videos are watched separately via the YouTube channel RSS feed.
 export const GET: APIRoute = async () => {
+  const catNames = await categoryNames();
   const articles = (await getCollection('articles'))
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
     .slice(0, 40)
@@ -13,7 +15,7 @@ export const GET: APIRoute = async () => {
       title: a.data.title,
       path: `/articles/${a.slug}/`,
       date: a.data.date.toISOString(),
-      tag: a.data.tag || '',
+      tag: catNames.get(a.data.tag.id) ?? '',
       summary: (a.data.summary || '').toString().trim().slice(0, 320),
       image: a.data.heroImage || '',
     }));

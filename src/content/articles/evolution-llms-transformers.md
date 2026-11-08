@@ -1,6 +1,6 @@
 ---
 title: "The Evolution of Large Language Models: From Recurrence to Transformers"
-tag: Artificial Intelligence
+tag: src/content/categories/artificial-intelligence.json
 date: 2025-08-22
 heroImage: /uploads/hero-evolution-llms-transformers.jpg
 summary: "The history of language models is a story of architectural evolution — from n-gram models through RNNs and LSTMs to the Transformer breakthrough that made today's LLMs possible. Understanding this history illuminates why current models work the way they do."

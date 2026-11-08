@@ -1,6 +1,6 @@
 ---
 title: "Cultivating Optimism: A Skill for Success"
-tag: Design
+tag: src/content/categories/design.json
 date: 2026-01-28
 heroImage: /uploads/hero-cultivating-optimism.jpg
 ---

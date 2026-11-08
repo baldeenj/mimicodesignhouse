@@ -1,6 +1,6 @@
 ---
 title: 'Pipeline discipline, enforced: how Event Horizon runs the lead pipeline'
-tag: Design
+tag: src/content/categories/design.json
 date: 2026-07-29T00:00:00.000Z
 heroImage: /uploads/Event Horizon Hero Image-selection.jpg
 summary: 'Most CRMs treat the pipeline as a whiteboard. A rep drags a deal from “Discovery” to “Proposal” whenever it feels right, and the stage becomes a label rather than a fact. Forecasts inherit that optimism, managers can’t trust the board, and “why did this deal stall?” has no answer. Event Horizon takes the opposite stance: the pipeline is a set of rules the system enforces, not suggestions it displays.'

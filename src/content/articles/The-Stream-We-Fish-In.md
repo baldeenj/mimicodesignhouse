@@ -1,6 +1,6 @@
 ---
 title: The Stream We Fish In
-tag: src/content/categories/theory.json
+tag: src/content/categories/quantum-mechanics.json
 date: 2026-11-08T00:00:00.000Z
 heroImage: /uploads/Option 4 · Walden Pond photo@2x.png
 summary: |-

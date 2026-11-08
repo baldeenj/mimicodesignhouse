@@ -40,6 +40,10 @@ export default defineConfig({
             label: "Category",
             required: true,
             collections: ["category"],
+            ui: {
+              // Show the category's name in the picker instead of its file path.
+              optionComponent: (values: { name?: string }) => values?.name ?? "",
+            },
           },
           {
             type: "datetime",

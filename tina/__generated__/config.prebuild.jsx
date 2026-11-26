@@ -30,19 +30,15 @@ var config_default = defineConfig({
             required: true
           },
           {
-            type: "string",
+            type: "reference",
             name: "tag",
             label: "Category",
             required: true,
-            options: [
-              "Security",
-              "Artificial Intelligence",
-              "HCI",
-              "Theory",
-              "UX Research",
-              "Strategy",
-              "Design"
-            ]
+            collections: ["category"],
+            ui: {
+              // Show the category's name in the picker instead of its file path.
+              optionComponent: (values) => values?.name ?? ""
+            }
           },
           {
             type: "datetime",
@@ -68,6 +64,27 @@ var config_default = defineConfig({
             isBody: true
           }
         ]
+      },
+      {
+        name: "category",
+        label: "Categories",
+        path: "src/content/categories",
+        format: "json",
+        fields: [
+          {
+            type: "string",
+            name: "name",
+            label: "Name",
+            isTitle: true,
+            required: true
+          }
+        ],
+        ui: {
+          filename: {
+            // Derive the file name from the category name, e.g. "UX Research" -> ux-research.json
+            slugify: (values) => (values?.name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+          }
+        }
       },
       {
         name: "vlog",

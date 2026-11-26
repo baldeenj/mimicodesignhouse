@@ -5,6 +5,9 @@ scalar Reference
 """"""
 scalar JSON
 
+"""A rich-text document, renderable by TinaMarkdown"""
+scalar RichText
+
 type SystemInfo {
   filename: String!
   title: String
@@ -56,6 +59,8 @@ type Query {
   document(collection: String, relativePath: String): DocumentNode!
   article(relativePath: String): Article!
   articleConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: ArticleFilter): ArticleConnection!
+  category(relativePath: String): Category!
+  categoryConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: CategoryFilter): CategoryConnection!
   vlog(relativePath: String): Vlog!
   vlogConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: VlogFilter): VlogConnection!
   portfolio(relativePath: String): Portfolio!
@@ -64,6 +69,7 @@ type Query {
 
 input DocumentFilter {
   article: ArticleFilter
+  category: CategoryFilter
   vlog: VlogFilter
   portfolio: PortfolioFilter
 }
@@ -91,15 +97,17 @@ type Collection {
   documents(before: String, after: String, first: Float, last: Float, sort: String, filter: DocumentFilter, folder: String): DocumentConnection!
 }
 
-union DocumentNode = Article | Vlog | Portfolio | Folder
+union DocumentNode = Article | Category | Vlog | Portfolio | Folder
+
+union ArticleTag = Category
 
 type Article implements Node & Document {
   title: String!
-  tag: String!
+  tag: ArticleTag!
   date: String!
   heroImage: String
   summary: String
-  body: JSON
+  body: RichText
   id: ID!
   _sys: SystemInfo!
   _values: JSON!
@@ -110,6 +118,10 @@ input StringFilter {
   eq: String
   exists: Boolean
   in: [String]
+}
+
+input ArticleTagFilter {
+  category: CategoryFilter
 }
 
 input DatetimeFilter {
@@ -135,7 +147,7 @@ input RichTextFilter {
 
 input ArticleFilter {
   title: StringFilter
-  tag: StringFilter
+  tag: ArticleTagFilter
   date: DatetimeFilter
   heroImage: ImageFilter
   summary: StringFilter
@@ -153,6 +165,28 @@ type ArticleConnection implements Connection {
   edges: [ArticleConnectionEdges]
 }
 
+type Category implements Node & Document {
+  name: String!
+  id: ID!
+  _sys: SystemInfo!
+  _values: JSON!
+}
+
+input CategoryFilter {
+  name: StringFilter
+}
+
+type CategoryConnectionEdges {
+  cursor: String!
+  node: Category
+}
+
+type CategoryConnection implements Connection {
+  pageInfo: PageInfo!
+  totalCount: Float!
+  edges: [CategoryConnectionEdges]
+}
+
 type Vlog implements Node & Document {
   title: String!
   episode: Float!
@@ -160,7 +194,7 @@ type Vlog implements Node & Document {
   videoUrl: String!
   thumbnailUrl: String
   summary: String
-  body: JSON
+  body: RichText
   id: ID!
   _sys: SystemInfo!
   _values: JSON!
@@ -204,7 +238,7 @@ type Portfolio implements Node & Document {
   tags: [String]
   imageUrl: String
   featured: Boolean
-  body: JSON
+  body: RichText
   id: ID!
   _sys: SystemInfo!
   _values: JSON!
@@ -244,6 +278,8 @@ type Mutation {
   createFolder(collection: String, relativePath: String!): DocumentNode!
   updateArticle(relativePath: String!, params: ArticleMutation!): Article!
   createArticle(relativePath: String!, params: ArticleMutation!): Article!
+  updateCategory(relativePath: String!, params: CategoryMutation!): Category!
+  createCategory(relativePath: String!, params: CategoryMutation!): Category!
   updateVlog(relativePath: String!, params: VlogMutation!): Vlog!
   createVlog(relativePath: String!, params: VlogMutation!): Vlog!
   updatePortfolio(relativePath: String!, params: PortfolioMutation!): Portfolio!
@@ -252,6 +288,7 @@ type Mutation {
 
 input DocumentUpdateMutation {
   article: ArticleMutation
+  category: CategoryMutation
   vlog: VlogMutation
   portfolio: PortfolioMutation
   relativePath: String
@@ -259,6 +296,7 @@ input DocumentUpdateMutation {
 
 input DocumentMutation {
   article: ArticleMutation
+  category: CategoryMutation
   vlog: VlogMutation
   portfolio: PortfolioMutation
 }
@@ -269,7 +307,11 @@ input ArticleMutation {
   date: String
   heroImage: String
   summary: String
-  body: JSON
+  body: RichText
+}
+
+input CategoryMutation {
+  name: String
 }
 
 input VlogMutation {
@@ -279,7 +321,7 @@ input VlogMutation {
   videoUrl: String
   thumbnailUrl: String
   summary: String
-  body: JSON
+  body: RichText
 }
 
 input PortfolioMutation {
@@ -289,7 +331,7 @@ input PortfolioMutation {
   tags: [String]
   imageUrl: String
   featured: Boolean
-  body: JSON
+  body: RichText
 }
 
 schema {

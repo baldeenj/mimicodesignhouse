@@ -7,13 +7,13 @@
     })
     return str
   }
-  export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+  import type { TinaMarkdownContent } from 'tinacms/dist/rich-text';
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -24,6 +24,8 @@ export type Scalars = {
   /** References another document, used as a foreign key */
   Reference: { input: any; output: any; }
   JSON: { input: any; output: any; }
+  /** A rich-text document, renderable by TinaMarkdown */
+  RichText: { input: TinaMarkdownContent; output: TinaMarkdownContent; }
 };
 
 export type SystemInfo = {
@@ -84,6 +86,8 @@ export type Query = {
   document: DocumentNode;
   article: Article;
   articleConnection: ArticleConnection;
+  category: Category;
+  categoryConnection: CategoryConnection;
   vlog: Vlog;
   vlogConnection: VlogConnection;
   portfolio: Portfolio;
@@ -127,6 +131,21 @@ export type QueryArticleConnectionArgs = {
 };
 
 
+export type QueryCategoryArgs = {
+  relativePath?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryCategoryConnectionArgs = {
+  before?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Float']['input']>;
+  last?: InputMaybe<Scalars['Float']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<CategoryFilter>;
+};
+
+
 export type QueryVlogArgs = {
   relativePath?: InputMaybe<Scalars['String']['input']>;
 };
@@ -158,6 +177,7 @@ export type QueryPortfolioConnectionArgs = {
 
 export type DocumentFilter = {
   article?: InputMaybe<ArticleFilter>;
+  category?: InputMaybe<CategoryFilter>;
   vlog?: InputMaybe<VlogFilter>;
   portfolio?: InputMaybe<PortfolioFilter>;
 };
@@ -199,16 +219,18 @@ export type CollectionDocumentsArgs = {
   folder?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type DocumentNode = Article | Vlog | Portfolio | Folder;
+export type DocumentNode = Article | Category | Vlog | Portfolio | Folder;
+
+export type ArticleTag = Category;
 
 export type Article = Node & Document & {
   __typename?: 'Article';
   title: Scalars['String']['output'];
-  tag: Scalars['String']['output'];
+  tag: ArticleTag;
   date: Scalars['String']['output'];
   heroImage?: Maybe<Scalars['String']['output']>;
   summary?: Maybe<Scalars['String']['output']>;
-  body?: Maybe<Scalars['JSON']['output']>;
+  body?: Maybe<Scalars['RichText']['output']>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
@@ -219,6 +241,10 @@ export type StringFilter = {
   eq?: InputMaybe<Scalars['String']['input']>;
   exists?: InputMaybe<Scalars['Boolean']['input']>;
   in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type ArticleTagFilter = {
+  category?: InputMaybe<CategoryFilter>;
 };
 
 export type DatetimeFilter = {
@@ -244,7 +270,7 @@ export type RichTextFilter = {
 
 export type ArticleFilter = {
   title?: InputMaybe<StringFilter>;
-  tag?: InputMaybe<StringFilter>;
+  tag?: InputMaybe<ArticleTagFilter>;
   date?: InputMaybe<DatetimeFilter>;
   heroImage?: InputMaybe<ImageFilter>;
   summary?: InputMaybe<StringFilter>;
@@ -264,6 +290,31 @@ export type ArticleConnection = Connection & {
   edges?: Maybe<Array<Maybe<ArticleConnectionEdges>>>;
 };
 
+export type Category = Node & Document & {
+  __typename?: 'Category';
+  name: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  _sys: SystemInfo;
+  _values: Scalars['JSON']['output'];
+};
+
+export type CategoryFilter = {
+  name?: InputMaybe<StringFilter>;
+};
+
+export type CategoryConnectionEdges = {
+  __typename?: 'CategoryConnectionEdges';
+  cursor: Scalars['String']['output'];
+  node?: Maybe<Category>;
+};
+
+export type CategoryConnection = Connection & {
+  __typename?: 'CategoryConnection';
+  pageInfo: PageInfo;
+  totalCount: Scalars['Float']['output'];
+  edges?: Maybe<Array<Maybe<CategoryConnectionEdges>>>;
+};
+
 export type Vlog = Node & Document & {
   __typename?: 'Vlog';
   title: Scalars['String']['output'];
@@ -272,7 +323,7 @@ export type Vlog = Node & Document & {
   videoUrl: Scalars['String']['output'];
   thumbnailUrl?: Maybe<Scalars['String']['output']>;
   summary?: Maybe<Scalars['String']['output']>;
-  body?: Maybe<Scalars['JSON']['output']>;
+  body?: Maybe<Scalars['RichText']['output']>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
@@ -319,7 +370,7 @@ export type Portfolio = Node & Document & {
   tags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   imageUrl?: Maybe<Scalars['String']['output']>;
   featured?: Maybe<Scalars['Boolean']['output']>;
-  body?: Maybe<Scalars['JSON']['output']>;
+  body?: Maybe<Scalars['RichText']['output']>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
@@ -362,6 +413,8 @@ export type Mutation = {
   createFolder: DocumentNode;
   updateArticle: Article;
   createArticle: Article;
+  updateCategory: Category;
+  createCategory: Category;
   updateVlog: Vlog;
   createVlog: Vlog;
   updatePortfolio: Portfolio;
@@ -414,6 +467,18 @@ export type MutationCreateArticleArgs = {
 };
 
 
+export type MutationUpdateCategoryArgs = {
+  relativePath: Scalars['String']['input'];
+  params: CategoryMutation;
+};
+
+
+export type MutationCreateCategoryArgs = {
+  relativePath: Scalars['String']['input'];
+  params: CategoryMutation;
+};
+
+
 export type MutationUpdateVlogArgs = {
   relativePath: Scalars['String']['input'];
   params: VlogMutation;
@@ -439,6 +504,7 @@ export type MutationCreatePortfolioArgs = {
 
 export type DocumentUpdateMutation = {
   article?: InputMaybe<ArticleMutation>;
+  category?: InputMaybe<CategoryMutation>;
   vlog?: InputMaybe<VlogMutation>;
   portfolio?: InputMaybe<PortfolioMutation>;
   relativePath?: InputMaybe<Scalars['String']['input']>;
@@ -446,6 +512,7 @@ export type DocumentUpdateMutation = {
 
 export type DocumentMutation = {
   article?: InputMaybe<ArticleMutation>;
+  category?: InputMaybe<CategoryMutation>;
   vlog?: InputMaybe<VlogMutation>;
   portfolio?: InputMaybe<PortfolioMutation>;
 };
@@ -456,7 +523,11 @@ export type ArticleMutation = {
   date?: InputMaybe<Scalars['String']['input']>;
   heroImage?: InputMaybe<Scalars['String']['input']>;
   summary?: InputMaybe<Scalars['String']['input']>;
-  body?: InputMaybe<Scalars['JSON']['input']>;
+  body?: InputMaybe<Scalars['RichText']['input']>;
+};
+
+export type CategoryMutation = {
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type VlogMutation = {
@@ -466,7 +537,7 @@ export type VlogMutation = {
   videoUrl?: InputMaybe<Scalars['String']['input']>;
   thumbnailUrl?: InputMaybe<Scalars['String']['input']>;
   summary?: InputMaybe<Scalars['String']['input']>;
-  body?: InputMaybe<Scalars['JSON']['input']>;
+  body?: InputMaybe<Scalars['RichText']['input']>;
 };
 
 export type PortfolioMutation = {
@@ -476,81 +547,205 @@ export type PortfolioMutation = {
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   imageUrl?: InputMaybe<Scalars['String']['input']>;
   featured?: InputMaybe<Scalars['Boolean']['input']>;
-  body?: InputMaybe<Scalars['JSON']['input']>;
+  body?: InputMaybe<Scalars['RichText']['input']>;
 };
 
-export type ArticlePartsFragment = { __typename: 'Article', title: string, tag: string, date: string, heroImage?: string | null, summary?: string | null, body?: any | null };
+export type StringFilter = {
+  startsWith?: string | null | undefined;
+  eq?: string | null | undefined;
+  exists?: boolean | null | undefined;
+  in?: Array<string | null | undefined> | null | undefined;
+};
 
-export type VlogPartsFragment = { __typename: 'Vlog', title: string, episode: number, date: string, videoUrl: string, thumbnailUrl?: string | null, summary?: string | null, body?: any | null };
+export type ArticleTagFilter = {
+  category?: CategoryFilter | null | undefined;
+};
 
-export type PortfolioPartsFragment = { __typename: 'Portfolio', client: string, title: string, description: string, tags?: Array<string | null> | null, imageUrl?: string | null, featured?: boolean | null, body?: any | null };
+export type DatetimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  eq?: string | null | undefined;
+  exists?: boolean | null | undefined;
+  in?: Array<string | null | undefined> | null | undefined;
+};
+
+export type ImageFilter = {
+  startsWith?: string | null | undefined;
+  eq?: string | null | undefined;
+  exists?: boolean | null | undefined;
+  in?: Array<string | null | undefined> | null | undefined;
+};
+
+export type RichTextFilter = {
+  startsWith?: string | null | undefined;
+  eq?: string | null | undefined;
+  exists?: boolean | null | undefined;
+};
+
+export type ArticleFilter = {
+  title?: StringFilter | null | undefined;
+  tag?: ArticleTagFilter | null | undefined;
+  date?: DatetimeFilter | null | undefined;
+  heroImage?: ImageFilter | null | undefined;
+  summary?: StringFilter | null | undefined;
+  body?: RichTextFilter | null | undefined;
+};
+
+export type CategoryFilter = {
+  name?: StringFilter | null | undefined;
+};
+
+export type NumberFilter = {
+  lt?: number | null | undefined;
+  lte?: number | null | undefined;
+  gte?: number | null | undefined;
+  gt?: number | null | undefined;
+  eq?: number | null | undefined;
+  exists?: boolean | null | undefined;
+  in?: Array<number | null | undefined> | null | undefined;
+};
+
+export type VlogFilter = {
+  title?: StringFilter | null | undefined;
+  episode?: NumberFilter | null | undefined;
+  date?: DatetimeFilter | null | undefined;
+  videoUrl?: StringFilter | null | undefined;
+  thumbnailUrl?: StringFilter | null | undefined;
+  summary?: StringFilter | null | undefined;
+  body?: RichTextFilter | null | undefined;
+};
+
+export type BooleanFilter = {
+  eq?: boolean | null | undefined;
+  exists?: boolean | null | undefined;
+};
+
+export type PortfolioFilter = {
+  client?: StringFilter | null | undefined;
+  title?: StringFilter | null | undefined;
+  description?: StringFilter | null | undefined;
+  tags?: StringFilter | null | undefined;
+  imageUrl?: ImageFilter | null | undefined;
+  featured?: BooleanFilter | null | undefined;
+  body?: RichTextFilter | null | undefined;
+};
+
+export type ArticlePartsFragment = { __typename: 'Article', title: string, date: string, heroImage: string | null, summary: string | null, body: TinaMarkdownContent | null, tag: { __typename: 'Category', name: string, id: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+
+export type CategoryPartsFragment = { __typename: 'Category', name: string };
+
+export type VlogPartsFragment = { __typename: 'Vlog', title: string, episode: number, date: string, videoUrl: string, thumbnailUrl: string | null, summary: string | null, body: TinaMarkdownContent | null };
+
+export type PortfolioPartsFragment = { __typename: 'Portfolio', client: string, title: string, description: string, tags: Array<string | null> | null, imageUrl: string | null, featured: boolean | null, body: TinaMarkdownContent | null };
 
 export type ArticleQueryVariables = Exact<{
-  relativePath: Scalars['String']['input'];
+  relativePath: string;
 }>;
 
 
-export type ArticleQuery = { __typename?: 'Query', article: { __typename: 'Article', id: string, title: string, tag: string, date: string, heroImage?: string | null, summary?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type ArticleQuery = { article: { __typename: 'Article', id: string, title: string, date: string, heroImage: string | null, summary: string | null, body: TinaMarkdownContent | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, tag: { __typename: 'Category', name: string, id: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } } };
 
 export type ArticleConnectionQueryVariables = Exact<{
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<ArticleFilter>;
+  before?: string | null | undefined;
+  after?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sort?: string | null | undefined;
+  filter?: ArticleFilter | null | undefined;
 }>;
 
 
-export type ArticleConnectionQuery = { __typename?: 'Query', articleConnection: { __typename?: 'ArticleConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'ArticleConnectionEdges', cursor: string, node?: { __typename: 'Article', id: string, title: string, tag: string, date: string, heroImage?: string | null, summary?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type ArticleConnectionQuery = { articleConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Article', id: string, title: string, date: string, heroImage: string | null, summary: string | null, body: TinaMarkdownContent | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, tag: { __typename: 'Category', name: string, id: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } } | null } | null> | null } };
+
+export type CategoryQueryVariables = Exact<{
+  relativePath: string;
+}>;
+
+
+export type CategoryQuery = { category: { __typename: 'Category', id: string, name: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+
+export type CategoryConnectionQueryVariables = Exact<{
+  before?: string | null | undefined;
+  after?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sort?: string | null | undefined;
+  filter?: CategoryFilter | null | undefined;
+}>;
+
+
+export type CategoryConnectionQuery = { categoryConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Category', id: string, name: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export type VlogQueryVariables = Exact<{
-  relativePath: Scalars['String']['input'];
+  relativePath: string;
 }>;
 
 
-export type VlogQuery = { __typename?: 'Query', vlog: { __typename: 'Vlog', id: string, title: string, episode: number, date: string, videoUrl: string, thumbnailUrl?: string | null, summary?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type VlogQuery = { vlog: { __typename: 'Vlog', id: string, title: string, episode: number, date: string, videoUrl: string, thumbnailUrl: string | null, summary: string | null, body: TinaMarkdownContent | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type VlogConnectionQueryVariables = Exact<{
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<VlogFilter>;
+  before?: string | null | undefined;
+  after?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sort?: string | null | undefined;
+  filter?: VlogFilter | null | undefined;
 }>;
 
 
-export type VlogConnectionQuery = { __typename?: 'Query', vlogConnection: { __typename?: 'VlogConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'VlogConnectionEdges', cursor: string, node?: { __typename: 'Vlog', id: string, title: string, episode: number, date: string, videoUrl: string, thumbnailUrl?: string | null, summary?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type VlogConnectionQuery = { vlogConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Vlog', id: string, title: string, episode: number, date: string, videoUrl: string, thumbnailUrl: string | null, summary: string | null, body: TinaMarkdownContent | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export type PortfolioQueryVariables = Exact<{
-  relativePath: Scalars['String']['input'];
+  relativePath: string;
 }>;
 
 
-export type PortfolioQuery = { __typename?: 'Query', portfolio: { __typename: 'Portfolio', id: string, client: string, title: string, description: string, tags?: Array<string | null> | null, imageUrl?: string | null, featured?: boolean | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type PortfolioQuery = { portfolio: { __typename: 'Portfolio', id: string, client: string, title: string, description: string, tags: Array<string | null> | null, imageUrl: string | null, featured: boolean | null, body: TinaMarkdownContent | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type PortfolioConnectionQueryVariables = Exact<{
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<PortfolioFilter>;
+  before?: string | null | undefined;
+  after?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sort?: string | null | undefined;
+  filter?: PortfolioFilter | null | undefined;
 }>;
 
 
-export type PortfolioConnectionQuery = { __typename?: 'Query', portfolioConnection: { __typename?: 'PortfolioConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'PortfolioConnectionEdges', cursor: string, node?: { __typename: 'Portfolio', id: string, client: string, title: string, description: string, tags?: Array<string | null> | null, imageUrl?: string | null, featured?: boolean | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type PortfolioConnectionQuery = { portfolioConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Portfolio', id: string, client: string, title: string, description: string, tags: Array<string | null> | null, imageUrl: string | null, featured: boolean | null, body: TinaMarkdownContent | null, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export const ArticlePartsFragmentDoc = gql`
     fragment ArticleParts on Article {
   __typename
   title
-  tag
+  tag {
+    ... on Category {
+      __typename
+      name
+    }
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+  }
   date
   heroImage
   summary
   body
+}
+    `;
+export const CategoryPartsFragmentDoc = gql`
+    fragment CategoryParts on Category {
+  __typename
+  name
 }
     `;
 export const VlogPartsFragmentDoc = gql`
@@ -634,6 +829,63 @@ export const ArticleConnectionDocument = gql`
   }
 }
     ${ArticlePartsFragmentDoc}`;
+export const CategoryDocument = gql`
+    query category($relativePath: String!) {
+  category(relativePath: $relativePath) {
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+    ...CategoryParts
+  }
+}
+    ${CategoryPartsFragmentDoc}`;
+export const CategoryConnectionDocument = gql`
+    query categoryConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: CategoryFilter) {
+  categoryConnection(
+    before: $before
+    after: $after
+    first: $first
+    last: $last
+    sort: $sort
+    filter: $filter
+  ) {
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    edges {
+      cursor
+      node {
+        ... on Document {
+          _sys {
+            filename
+            basename
+            hasReferences
+            breadcrumbs
+            path
+            relativePath
+            extension
+          }
+          id
+        }
+        ...CategoryParts
+      }
+    }
+  }
+}
+    ${CategoryPartsFragmentDoc}`;
 export const VlogDocument = gql`
     query vlog($relativePath: String!) {
   vlog(relativePath: $relativePath) {
@@ -757,6 +1009,12 @@ export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) 
     articleConnection(variables?: ArticleConnectionQueryVariables, options?: C): Promise<{data: ArticleConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: ArticleConnectionQueryVariables, query: string}> {
         return requester<{data: ArticleConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: ArticleConnectionQueryVariables, query: string}, ArticleConnectionQueryVariables>(ArticleConnectionDocument, variables, options);
       },
+    category(variables: CategoryQueryVariables, options?: C): Promise<{data: CategoryQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: CategoryQueryVariables, query: string}> {
+        return requester<{data: CategoryQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: CategoryQueryVariables, query: string}, CategoryQueryVariables>(CategoryDocument, variables, options);
+      },
+    categoryConnection(variables?: CategoryConnectionQueryVariables, options?: C): Promise<{data: CategoryConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: CategoryConnectionQueryVariables, query: string}> {
+        return requester<{data: CategoryConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: CategoryConnectionQueryVariables, query: string}, CategoryConnectionQueryVariables>(CategoryConnectionDocument, variables, options);
+      },
     vlog(variables: VlogQueryVariables, options?: C): Promise<{data: VlogQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: VlogQueryVariables, query: string}> {
         return requester<{data: VlogQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: VlogQueryVariables, query: string}, VlogQueryVariables>(VlogDocument, variables, options);
       },
@@ -816,7 +1074,7 @@ export const ExperimentalGetTinaClient = () =>
   getSdk(
     generateRequester(
       createClient({
-        url: "http://localhost:4001/graphql",
+        url: "https://content.tinajs.io/4.1/content/3cbde2df-4144-4f25-9dc4-98ba8aeecf59/github/main",
         queries,
       })
     )
@@ -828,5 +1086,7 @@ export const queries = (
   const requester = generateRequester(client)
   return getSdk(requester)
 }
+
+export type { Exact };
 
   
